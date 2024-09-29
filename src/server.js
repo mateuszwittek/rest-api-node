@@ -1,25 +1,17 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'node:fs/promises';
-import nodeCache from 'node-cache';
 import path from 'node:path';
 import {fileURLToPath} from 'url';
+import {createCache, createCacheService} from "./utils/cache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cache = new nodeCache();
+const cache = createCache()
+const cacheService = createCacheService(cache);
 const PORT = 3001;
+
 const app = express();
-
-function saveToCache(key, file){
-    cache.set(key, file);
-}
-
-function getFromCache(key){
-    if (cache.has(key)) {
-        return cache.get(key);
-    }
-}
 
 function validJSON(str){
     try {
@@ -42,7 +34,7 @@ async function getFile(...paths) {
     try {
         const fileContent = await fs.readFile(filePath, 'utf8');
         const value = validJSON(fileContent) || fileContent;
-        saveToCache(fileName, value);
+        cacheService.saveToCache(fileName, value);
         return value;
     } catch (error) {
         throw new Error('Error reading file');
@@ -50,9 +42,12 @@ async function getFile(...paths) {
 }
 
 async function getPeopleData() {
-    if(getFromCache('people-data')){
-        return getFromCache('people-data');
+    const cachedData = cacheService.getFromCache('people-data');
+    if(cachedData){
+        console.log('cached data return');
+        return cachedData;
     }
+    console.log('getfile data return');
     return await getFile('people', 'people-data.json');
 }
 
