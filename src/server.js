@@ -1,20 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import {cacheService} from "./utils/cache.js";
-import {getFile} from "./utils/getFile.js";
+import {getData} from "./utils/getData.js";
 
 const PORT = 3001;
 const app = express();
-
-async function getData(...pathChunks) {
-    const cachedData = cacheService.getFromCache('people-data');
-    if(cachedData){
-        console.log('cached data return');
-        return cachedData;
-    }
-    console.log('getfile data return');
-    return await getFile(...pathChunks);
-}
 
 app.use(cors());
 
