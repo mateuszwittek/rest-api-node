@@ -7,4 +7,7 @@ const createCacheService = (cache) => ({
     getFromCache: (key) => cache.get(key)
 });
 
-export { createCache, createCacheService };
+const cache = createCache()
+const cacheService = createCacheService(cache);
+
+export { cacheService };

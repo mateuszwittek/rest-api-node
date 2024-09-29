@@ -3,14 +3,11 @@ import cors from 'cors';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'url';
-import {createCache, createCacheService} from "./utils/cache.js";
+import {cacheService} from "./utils/cache.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const cache = createCache()
-const cacheService = createCacheService(cache);
 const PORT = 3001;
-
 const app = express();
 
 function validJSON(str){
