@@ -1,0 +1,30 @@
+[{
+  "id": 1,
+  "name": "Leanne Graham",
+  "username": "Bret",
+  "email": "2VlU8@example.com",
+},
+{
+  "id": 2,
+  "name": "Ervin Howell",
+  "username": "Antonette",
+  "email": "wKqFP@example.com",
+},
+{
+  "id": 3,
+  "name": "Clementine Bauch",
+  "username": "Samantha",
+  "email": "X5l7d@example.com",
+},
+{
+  "id": 4,
+  "name": "Patricia Lebsack",
+  "username": "Karianne",
+  "email": "jvqJk@example.com",
+},
+{
+  "id": 5,
+  "name": "Chelsey Dietrich",
+  "username": "Kamren",
+  "email": "X5l7d@example.com",
+}]

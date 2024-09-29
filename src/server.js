@@ -1,14 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 
-const port = 3001;
-let app = express();
+const PORT = 3001;
+const app = express();
+
 app.use(cors());
+
 app.get('/hello', (req, res) => {
     res.send('Hello World!');
 })
-app.listen(port, () => {
-  console.info(`Server is listening on port ${port}`);
-}).on('error', (error) => {
-  console.error(`Error occurred while starting server on port ${port}: ${error.message}`);
+
+app.listen(PORT, () => {
+    console.log(`Server is listening on port ${PORT}`);
 });
