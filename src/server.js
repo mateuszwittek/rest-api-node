@@ -6,14 +6,14 @@ import {getFile} from "./utils/getFile.js";
 const PORT = 3001;
 const app = express();
 
-async function getPeopleData() {
+async function getData(...pathChunks) {
     const cachedData = cacheService.getFromCache('people-data');
     if(cachedData){
         console.log('cached data return');
         return cachedData;
     }
     console.log('getfile data return');
-    return await getFile('people', 'people-data.json');
+    return await getFile(...pathChunks);
 }
 
 app.use(cors());
@@ -25,7 +25,7 @@ app.get('/hello', (req, res) => {
 
 app.get('/people', async (req, res) => {
     try {
-        const peopleData = await getPeopleData();
+        const peopleData = await getData('people', 'people-data.json');
         res.json(peopleData);
     } catch (error) {
         res.status(500).send('Error reading file');

@@ -7,8 +7,8 @@ import {fileURLToPath} from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function getFile(...paths) {
-    const filePath = path.resolve(__dirname, '../', ...paths);
+async function getFile(...pathChunks) {
+    const filePath = path.resolve(__dirname, '../', ...pathChunks);
     const fileName = path.parse(filePath).name;
 
     try {
