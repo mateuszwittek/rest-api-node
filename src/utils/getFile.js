@@ -17,7 +17,8 @@ async function getFile(...pathChunks) {
         cacheService.saveToCache(fileName, value);
         return value;
     } catch (error) {
-        throw new Error('Error reading file');
+        console.error('Error reading file:', error);
+        throw new Error ('Error reading file');
     }
 }
 

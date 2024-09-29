@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import {cacheService} from "./utils/cache.js";
-import {getFile} from "./utils/getFile.js";
+import {getFileData} from "./utils/getFileData.js";
 
 const PORT = 3001;
 const app = express();
@@ -12,10 +11,9 @@ app.get('/hello', (req, res) => {
     res.json('Hello World!');
 })
 
-
 app.get('/people', async (req, res) => {
     try {
-        const peopleData = await getData('people', 'people-data.json');
+        const peopleData = await getFileData('people', 'people-data.json');
         res.json(peopleData);
     } catch (error) {
         res.status(500).send('Error reading file');
