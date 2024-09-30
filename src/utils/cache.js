@@ -1,13 +1,36 @@
 import nodeCache from 'node-cache';
 
-const createCache = () => new nodeCache();
+const cacheOptions = {
+  stdTTL: 3600,
+  checkPeriod: 600,
+  useClones: false,
+  maxKeys: 100
+};
 
-const createCacheService = (cache) => ({
-    saveToCache: (key, file) => cache.set(key, file),
-    getFromCache: (key) => cache.get(key)
-});
+const createCacheService = (cache) => {
+    const saveToCache = (key, file) => {
+      if (!key || !file) {
+        throw new Error('Key and file must be provided');
+      }
+      return cache.set(key, file);
+    };
+  
+    const getFromCache = (key) => {
+      if (!key) {
+        throw new Error('Key must be provided');
+      }
+      return cache.get(key);
+    };
+  
+    return {
+      saveToCache,
+      getFromCache
+    };
+  };
 
-const cache = createCache()
+
+const cache = new nodeCache(cacheOptions);
 const cacheService = createCacheService(cache);
 
 export { cacheService };
+
