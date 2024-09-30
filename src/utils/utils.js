@@ -1,14 +1,15 @@
 import path from 'node:path';
 
 const getFileName = filePath => {
-    if (typeof filePath !== 'string' || filePath.length === 0) {
-      throw new Error('Invalid file path');
-    }
-    const normalizedPath = path.normalize(filePath);
-    return path.basename(normalizedPath, path.extname(normalizedPath));
+  if (typeof filePath !== 'string' || filePath.length === 0) {
+    throw new Error('Invalid file path');
+  }
+
+  const normalizedPath = path.normalize(filePath);
+  return path.basename(normalizedPath, path.extname(normalizedPath));
 };
 
-const validJSON = (data) => {
+const validJSON = data => {
   if (typeof data !== 'string') {
     throw new Error('Input data must be a string');
   }
@@ -25,5 +26,4 @@ const validJSON = (data) => {
   }
 };
 
-
-export {validJSON, getFileName}
+export { validJSON, getFileName };
