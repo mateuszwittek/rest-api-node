@@ -1,15 +1,26 @@
 import fs from "node:fs/promises";
-import {validJSON} from "./utils.js";
 
-async function getFile(filePath) {
+const getFile = async (filePath) => {
     try {
-        const file = await fs.readFile(filePath, 'utf8');
-        const fileContent = validJSON(file) || file;
-        return fileContent;
+        return await fs.readFile(filePath, 'utf8');
     } catch (error) {
-        console.error('Error reading file:', error);
-        throw new Error ('Error reading file');
-    }
+        switch (error.code) {
+            case 'ENOENT':
+                console.error(`File not found`);
+                throw new Error(`File not found`);
+            case 'EACCES':
+                console.error(`Permission denied`);
+                throw new Error(`Permission denied`);
+            case 'EISDIR':
+                console.error(`Path is a directory, not a file`);
+                throw new Error(`Path is a directory, not a file`);
+            default:
+                console.error(`Error processing file:`, error);
+                throw new Error('Error processing file');
+    
+        }    
+    };
 }
 
-export { getFile };
+
+export { getFile }

@@ -1,22 +1,29 @@
 import path from 'node:path';
 
-function getFileName(filePath) {
-    return path.basename(filePath, path.extname(filePath));
-}
-
-function validJSON(str){
-    try {
-        return JSON.parse(str);
-    } catch (error) {
-        if (error instanceof SyntaxError) {
-            console.log('File content is not a valid JSON string');
-        } else {
-            console.error('An error occurred:', error);
-        }
-        console.log('not valid json returned');
-        return false;
+const getFileName = filePath => {
+    if (typeof filePath !== 'string' || filePath.length === 0) {
+      throw new Error('Invalid file path');
     }
-}
+    const normalizedPath = path.normalize(filePath);
+    return path.basename(normalizedPath, path.extname(normalizedPath));
+};
+
+const validJSON = (data) => {
+  if (typeof data !== 'string') {
+    throw new Error('Input data must be a string');
+  }
+
+  try {
+    const parsedData = JSON.parse(data);
+    return parsedData;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error('Invalid JSON syntax');
+    } else {
+      throw new Error('The provided file is not a JSON file');
+    }
+  }
+};
 
 
 export {validJSON, getFileName}

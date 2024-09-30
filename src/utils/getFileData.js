@@ -1,22 +1,23 @@
 import { cacheService } from "./cache.js";
 import { getFile } from "./getFile.js";
-import { getFileName } from "./utils.js";
+import { getFileName, validJSON } from "./utils.js";
 
 
 async function getFileData(filePath) {
     const fileName = getFileName(filePath);
-    try{
-        const cachedData = cacheService.getFromCache(fileName);
-        if(cachedData){
-            console.log('cached data return');
-            return cachedData;
-        }
-        console.log('getfile data return');
-        const file = await getFile(filePath);
-        cacheService.saveToCache(fileName, file);
-        return file;
+    const cachedData = cacheService.getFromCache(fileName);
+    
+    if (cachedData) return cachedData;
+  
+    try {
+      const file = await getFile(filePath);
+      try {
+        return validJSON(file);
+      } catch (error) {
+        throw new Error(`The file ${fileName} is not a valid JSON file.`);
+      }
     } catch (error) {
-        console.error(error);
+      throw error;
     }
 }
 
