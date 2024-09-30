@@ -20,7 +20,7 @@ app.get('/people', async (req, res) => {
     const peopleData = await getFileData(filePath);
     res.json(peopleData);
   } catch (error) {
-    res.status(500).send('Error reading file');
+    res.status(500).send(`Error reading file: ${error}`);
   }
 });
 
