@@ -1,3 +1,9 @@
+import path from 'node:path';
+
+function getFileName(filePath) {
+    return path.basename(filePath, path.extname(filePath));
+}
+
 function validJSON(str){
     try {
         return JSON.parse(str);
@@ -13,4 +19,4 @@ function validJSON(str){
 }
 
 
-export {validJSON}
+export {validJSON, getFileName}

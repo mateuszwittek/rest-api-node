@@ -1,9 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import {getFileData} from "./utils/getFileData.js";
+import path from "node:path";
+import { fileURLToPath } from 'url';
+import { getFileData } from "./utils/getFileData.js";
 
 const PORT = 3001;
 const app = express();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(cors());
 
@@ -13,7 +16,8 @@ app.get('/hello', (req, res) => {
 
 app.get('/people', async (req, res) => {
     try {
-        const peopleData = await getFileData('people-data', 'people', 'people-data.json');
+        const filePath = path.join(__dirname, '/people/people-data.json');
+        const peopleData = await getFileData(filePath);
         res.json(peopleData);
     } catch (error) {
         res.status(500).send('Error reading file');
