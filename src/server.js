@@ -3,13 +3,17 @@ import cors from 'cors';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 import { getAllPeople } from './controllers/peopleController.js';
+import { getFileData } from './utils/getFileData.js';
+import { modifyFile } from './utils/modifyFile.js';
+import { generateNewID } from './utils/generateNewID.js';
+import { getFileDir } from './utils/getFileDir.js';
 
 export const dirPath = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3001;
 const app = express();
 
 app.use(cors());
-
+app.use(express.json());
 app.get('/hello', (req, res) => {
   res.json('Hello World!');
 });
@@ -34,6 +38,23 @@ app.get('/people/:id', async (req, res) => {
     }
   } catch (error) {
     res.status(500).send(`Error reading file: ${error}`);
+  }
+});
+
+app.post('/people', async (req, res) => {
+  const { name, username, email } = req.body;
+  const filePath = getFileDir('/people/people-data.json');
+  if (!name || !username || !email) {
+    return res.status(400).send('Name, username, and email are required');
+  }
+  try {
+    const data = await getFileData(filePath);
+    const newPerson = { id: generateNewID(data), name, username, email };
+    const newPeople = [...data, newPerson];
+    await modifyFile(filePath, JSON.stringify(newPeople, null, 2));
+    res.status(201).json(newPerson);
+  } catch (error) {
+    res.status(500).send(`Error writing to file: ${error.message}`);
   }
 });
 

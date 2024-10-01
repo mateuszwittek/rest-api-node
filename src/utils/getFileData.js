@@ -2,15 +2,7 @@ import { cacheService } from './cache.js';
 import { getFile } from './getFile.js';
 import { getFileName, validJSON } from './utils.js';
 
-const parseFileContent = file => {
-  try {
-    return validJSON(file);
-  } catch (error) {
-    throw new Error(`The file is not a valid JSON file.`);
-  }
-};
-
-const processFile = async filePath => parseFileContent(await getFile(filePath));
+const checkIfJSON = file => validJSON(file);
 
 const getFileData = async filePath => {
   const fileName = getFileName(filePath);
@@ -21,9 +13,10 @@ const getFileData = async filePath => {
   }
 
   try {
-    const file = await processFile(filePath);
+    const file = await getFile(filePath);
+    const JSONFile = checkIfJSON(file);
     cacheService.saveToCache(fileName, file);
-    return file;
+    return JSONFile;
   } catch (error) {
     throw error;
   }

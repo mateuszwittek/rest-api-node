@@ -15,8 +15,7 @@ const validJSON = data => {
   }
 
   try {
-    const parsedData = JSON.parse(data);
-    return parsedData;
+    return JSON.parse(data);
   } catch (error) {
     if (error instanceof SyntaxError) {
       throw new Error('Invalid JSON syntax');
