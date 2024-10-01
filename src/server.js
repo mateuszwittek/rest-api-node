@@ -2,11 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
-import { getFileData } from './utils/getFileData.js';
+import { getAllPeople } from './controllers/peopleController.js';
 
+export const dirPath = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 3001;
 const app = express();
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(cors());
 
@@ -16,9 +16,8 @@ app.get('/hello', (req, res) => {
 
 app.get('/people', async (req, res) => {
   try {
-    const filePath = path.join(__dirname, '/people/people-data.json');
-    const peopleData = await getFileData(filePath);
-    res.json(peopleData);
+    const people = await getAllPeople();
+    res.json(people);
   } catch (error) {
     res.status(500).send(`Error reading file: ${error}`);
   }
@@ -26,9 +25,8 @@ app.get('/people', async (req, res) => {
 
 app.get('/people/:id', async (req, res) => {
   try {
-    const filePath = path.join(__dirname, '/people/people-data.json');
-    const peopleData = await getFileData(filePath);
-    const person = peopleData.find(person => person.id === Number(req.params.id));
+    const people = await getAllPeople();
+    const person = people.find(person => person.id === Number(req.params.id));
     if (!person) {
       res.status(404).send('Person not found');
     } else {
