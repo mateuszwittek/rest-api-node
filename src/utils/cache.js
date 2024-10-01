@@ -22,9 +22,14 @@ const createCacheService = cache => {
     return cache.get(key);
   };
 
+  const clearCache = key => {
+    return cache.del(key);
+  };
+
   return {
     saveToCache,
     getFromCache,
+    clearCache,
   };
 };
 

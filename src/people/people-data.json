@@ -28,5 +28,17 @@
     "name": "Chelsey Dietrich",
     "username": "Kamren",
     "email": "X5l7d@example.com"
+  },
+  {
+    "id": 6,
+    "name": "John Doe",
+    "username": "johndoe",
+    "email": "john.doe@example.com"
+  },
+  {
+    "id": 7,
+    "name": "Mrs. Dennis Schulist",
+    "username": "Leopoldo_Corkery",
+    "email": "X5l7d@example.com"
   }
 ]

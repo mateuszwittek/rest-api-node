@@ -15,7 +15,7 @@ const getFileData = async filePath => {
   try {
     const file = await getFile(filePath);
     const JSONFile = checkIfJSON(file);
-    cacheService.saveToCache(fileName, file);
+    cacheService.saveToCache(fileName, JSONFile);
     return JSONFile;
   } catch (error) {
     throw error;
