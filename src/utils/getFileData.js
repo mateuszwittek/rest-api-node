@@ -21,7 +21,9 @@ const getFileData = async filePath => {
   }
 
   try {
-    return await processFile(filePath);
+    const file = await processFile(filePath);
+    cacheService.saveToCache(fileName, file);
+    return file;
   } catch (error) {
     throw error;
   }
