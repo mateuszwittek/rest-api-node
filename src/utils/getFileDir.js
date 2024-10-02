@@ -1,5 +1,6 @@
-import { dirPath } from '../server.js';
+import config from '../../config/config.js';
 
-const getFileDir = relativePath => dirPath.concat(relativePath);
+const { rootPath } = config;
+const getFileDir = relativePath => rootPath.concat(relativePath);
 
 export { getFileDir };
