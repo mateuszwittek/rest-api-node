@@ -12,7 +12,28 @@ npm install
 npm start`
 ```
 
-App is running on port 3001.
+Create a .env file in the root directory and add the following variables:
+
+```text
+PORT=YOUR_PORT
+NODE_ENV=development
+```
+
+Then start the server:
+
+```bash
+npm start`
+```
+
+App is running on specified port.
+
+For development purposes, you can use nodemon to automatically restart the server when file changes are detected. To start the server with nodemon, use the following command:
+
+```bash
+npm run dev
+```
+
+This will start the server and watch for any changes in the src and config directories and the .env file.
 
 ## Endpoints
 
