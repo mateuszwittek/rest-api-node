@@ -9,7 +9,7 @@ To get started, follow these steps:
 ```bash
 git clone https://github.com/mateuszwittek/rest-api-node.git
 npm install
-npm start`
+npm start
 ```
 
 Create a .env file in the root directory and add the following variables:
@@ -22,7 +22,7 @@ NODE_ENV=development
 Then start the server:
 
 ```bash
-npm start`
+npm start
 ```
 
 App is running on specified port.
