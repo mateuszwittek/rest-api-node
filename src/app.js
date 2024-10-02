@@ -9,11 +9,6 @@ import { getFileDir } from './utils/getFileDir.js';
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-app.get('/hello', (req, res) => {
-  res.json('Hello World!');
-});
-
 app.get('/people', async (req, res) => {
   try {
     const people = await getAllPeople();
