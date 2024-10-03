@@ -3,6 +3,7 @@ import { modifyFile } from '../utils/modifyFile.js';
 import { getFileDir } from '../utils/getFileDir.js';
 import { generateNewID } from '../utils/generateNewID.js';
 import { messages, errors } from '../utils/errorHandler.js';
+import { successHandler } from '../utils/successHandler.js';
 
 const peopleFilePath = getFileDir('/people-data.json');
 
@@ -25,7 +26,7 @@ const modifyPeopleData = async data => {
 const getAllPeople = async (req, res, next) => {
   try {
     const people = await getPeopleData();
-    res.json(people);
+    successHandler(res, people);
   } catch (error) {
     next(error);
   }
@@ -46,7 +47,7 @@ const getPersonByID = async (req, res, next) => {
       return next(errors.NOT_FOUND(messages.error.PERSON_NOT_FOUND));
     }
 
-    res.json(person);
+    successHandler(res, person);
   } catch (error) {
     next(error);
   }
@@ -69,7 +70,7 @@ const addPerson = async (req, res, next) => {
     };
     const newPeople = [...people, newPerson];
     await modifyPeopleData(newPeople);
-    res.status(201).json(newPerson);
+    successHandler(res, newPerson, 201);
   } catch (error) {
     next(error);
   }
