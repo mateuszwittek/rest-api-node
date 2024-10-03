@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import { messages, errors } from '../utils/errorHandler.js';
 
 const getFile = async filePath => {
   try {
@@ -6,17 +7,13 @@ const getFile = async filePath => {
   } catch (error) {
     switch (error.code) {
       case 'ENOENT':
-        console.error(`File not found`);
-        throw new Error(`File not found`);
+        throw errors.NOT_FOUND();
       case 'EACCES':
-        console.error(`Permission denied`);
-        throw new Error(`Permission denied`);
+        throw errors.FORBIDDEN();
       case 'EISDIR':
-        console.error(`Path is a directory, not a file`);
-        throw new Error(`Path is a directory, not a file`);
+        throw errors.BAD_REQUEST();
       default:
-        console.error(`Error processing file:`, error);
-        throw new Error('Error processing file');
+        throw errors.INTERNAL_SERVER(messages.error.FILE_PROCESSING);
     }
   }
 };

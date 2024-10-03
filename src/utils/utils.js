@@ -1,26 +1,33 @@
 import path from 'node:path';
+import { messages, errors } from './errorHandler.js';
 
 const getFileName = filePath => {
-  if (typeof filePath !== 'string' || filePath.length === 0) {
-    throw new Error('Invalid file path');
+  if (filePath === null || filePath === undefined) {
+    throw errors.BAD_REQUEST(messages.error.MISSING_FILE_PATH);
   }
 
   const normalizedPath = path.normalize(filePath);
-  return path.basename(normalizedPath, path.extname(normalizedPath));
+  const fileName = path.basename(normalizedPath, path.extname(normalizedPath));
+
+  if (fileName === null || fileName === undefined) {
+    throw errors.BAD_REQUEST(messages.error.INVALID_FILE_PATH);
+  }
+
+  return fileName;
 };
 
 const validJSON = data => {
   if (typeof data !== 'string') {
-    throw new Error('Input data must be a string');
+    throw errors.BAD_REQUEST(messages.error.INPUT_MUST_BE_STRING);
   }
 
   try {
     return JSON.parse(data);
   } catch (error) {
     if (error instanceof SyntaxError) {
-      throw new Error('Invalid JSON syntax');
+      throw errors.BAD_REQUEST(messages.error.INVALID_JSON);
     } else {
-      throw new Error('The provided file is not a JSON file');
+      throw errors.INTERNAL_SERVER(messages.error.FILE_PROCESSING);
     }
   }
 };

@@ -2,6 +2,7 @@ import { getFileData } from '../utils/getFileData.js';
 import { modifyFile } from '../utils/modifyFile.js';
 import { getFileDir } from '../utils/getFileDir.js';
 import { generateNewID } from '../utils/generateNewID.js';
+import { messages, errors } from '../utils/errorHandler.js';
 
 const peopleFilePath = getFileDir('/people-data.json');
 
@@ -9,7 +10,7 @@ const getPeopleData = async () => {
   try {
     return await getFileData(peopleFilePath);
   } catch (error) {
-    throw new Error(`Error reading file: ${error.message}`);
+    throw errors.INTERNAL_SERVER(messages.error.READING_FILE);
   }
 };
 
@@ -17,22 +18,24 @@ const modifyPeopleData = async data => {
   try {
     await modifyFile(peopleFilePath, JSON.stringify(data, null, 2));
   } catch (error) {
-    throw new Error(`Error writing to file: ${error.message}`);
+    throw errors.INTERNAL_SERVER(messages.error.WRITING_FILE);
   }
 };
-const getAllPeople = async (req, res) => {
+
+const getAllPeople = async (req, res, next) => {
   try {
     const people = await getPeopleData();
     res.json(people);
   } catch (error) {
-    res.status(500).send(`Error reading file: ${error}`);
+    next(error);
   }
 };
-const getPersonByID = async (req, res) => {
+
+const getPersonByID = async (req, res, next) => {
   const id = Number(req.params.id);
 
   if (isNaN(id)) {
-    return res.status(400).send('ID must be a number');
+    return next(errors.BAD_REQUEST(messages.error.INVALID_ID));
   }
 
   try {
@@ -40,20 +43,20 @@ const getPersonByID = async (req, res) => {
     const person = people.find(person => person.id === id);
 
     if (!person) {
-      return res.status(404).send('Person not found');
+      return next(errors.NOT_FOUND(messages.error.PERSON_NOT_FOUND));
     }
 
     res.json(person);
   } catch (error) {
-    res.status(500).send(`Error reading data: ${error}`);
+    next(error);
   }
 };
 
-const addPerson = async (req, res) => {
+const addPerson = async (req, res, next) => {
   const { name, username, email } = req.body;
 
   if (!name || !username || !email) {
-    return res.status(400).send('Name, username, and email are required');
+    return next(errors.BAD_REQUEST(messages.error.REQUIRED_FIELDS));
   }
 
   try {
@@ -68,7 +71,7 @@ const addPerson = async (req, res) => {
     await modifyPeopleData(newPeople);
     res.status(201).json(newPerson);
   } catch (error) {
-    res.status(500).send(`Error writing to file: ${error.message}`);
+    next(error);
   }
 };
 
