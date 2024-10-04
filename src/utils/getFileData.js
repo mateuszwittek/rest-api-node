@@ -1,7 +1,8 @@
+import messages from './messages.js';
 import { cacheService } from './cache.js';
 import { getFile } from './getFile.js';
 import { getFileName, validJSON } from './utils.js';
-import { messages, errors } from './errorHandler.js';
+import { errors } from './errorHandler.js';
 
 const getFileData = async filePath => {
   if (!filePath) {

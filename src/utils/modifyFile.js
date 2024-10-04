@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
+import messages from './messages.js';
 import { cacheService } from './cache.js';
 import { getFileName } from './utils.js';
-import { messages, errors } from './errorHandler.js';
+import { errors } from './errorHandler.js';
 
 const modifyFile = async (filePath, content) => {
   if (!filePath || typeof filePath !== 'string') {

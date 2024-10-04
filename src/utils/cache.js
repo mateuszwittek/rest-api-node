@@ -1,5 +1,6 @@
 import nodeCache from 'node-cache';
-import { messages, errors } from '../utils/errorHandler.js';
+import messages from './messages.js';
+import { errors } from './errorHandler.js';
 
 const cacheOptions = {
   stdTTL: 3600,

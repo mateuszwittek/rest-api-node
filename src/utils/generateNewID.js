@@ -1,4 +1,5 @@
-import { messages, errors } from './errorHandler.js';
+import messages from './messages.js';
+import { errors } from './errorHandler.js';
 
 const generateNewID = data => {
   if (!Array.isArray(data) || data.length === 0) {

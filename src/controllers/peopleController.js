@@ -1,8 +1,9 @@
+import messages from '../utils/messages.js';
 import { getFileData } from '../utils/getFileData.js';
 import { modifyFile } from '../utils/modifyFile.js';
 import { getFileDir } from '../utils/getFileDir.js';
 import { generateNewID } from '../utils/generateNewID.js';
-import { messages, errors } from '../utils/errorHandler.js';
+import { errors } from '../utils/errorHandler.js';
 import { successHandler } from '../utils/successHandler.js';
 
 const peopleFilePath = getFileDir('/people-data.json');

@@ -1,5 +1,6 @@
 import config from '../../config/config.js';
-import { messages, errors } from './errorHandler.js';
+import { errors } from './errorHandler.js';
+import messages from './messages.js';
 
 const { rootPath } = config;
 const getFileDir = relativePath => {

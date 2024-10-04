@@ -1,5 +1,6 @@
 import path from 'node:path';
-import { messages, errors } from './errorHandler.js';
+import messages from './messages.js';
+import { errors } from './errorHandler.js';
 
 const getFileName = filePath => {
   if (filePath === null || filePath === undefined) {
