@@ -1,7 +1,9 @@
-const successHandler = (res, data, statusCode = 200) => {
+const successHandler = (res, message = 'Operation successful', data, statusCode = 200) => {
   res.status(statusCode).json({
     status: 'success',
-    data: data,
+    statusCode,
+    message,
+    data,
   });
 };
 

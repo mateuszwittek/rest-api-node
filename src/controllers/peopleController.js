@@ -18,6 +18,7 @@ const getPeopleData = async () => {
 const modifyPeopleData = async data => {
   try {
     await modifyFile(peopleFilePath, JSON.stringify(data, null, 2));
+    successHandler(res, people);
   } catch (error) {
     throw errors.INTERNAL_SERVER(messages.error.WRITING_FILE);
   }
@@ -26,7 +27,7 @@ const modifyPeopleData = async data => {
 const getAllPeople = async (req, res, next) => {
   try {
     const people = await getPeopleData();
-    successHandler(res, people);
+    successHandler(res, messages.success.PEOPLE_RETRIEVED, people);
   } catch (error) {
     next(error);
   }
@@ -47,7 +48,7 @@ const getPersonByID = async (req, res, next) => {
       return next(errors.NOT_FOUND(messages.error.PERSON_NOT_FOUND));
     }
 
-    successHandler(res, person);
+    successHandler(res, messages.success.PERSON_RETRIEVED, person);
   } catch (error) {
     next(error);
   }
@@ -70,7 +71,7 @@ const addPerson = async (req, res, next) => {
     };
     const newPeople = [...people, newPerson];
     await modifyPeopleData(newPeople);
-    successHandler(res, newPerson, 201);
+    successHandler(res, messages.success.PERSON_ADDED, newPerson, 201);
   } catch (error) {
     next(error);
   }

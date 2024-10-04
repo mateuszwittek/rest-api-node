@@ -11,6 +11,9 @@ class AppError extends Error {
 const messages = Object.freeze({
   success: {
     FILE_UPDATED: 'File modified successfully',
+    PEOPLE_RETRIEVED: 'People data retrieved successfully',
+    PERSON_RETRIEVED: 'Person data retrieved successfully',
+    PERSON_ADDED: 'New person added successfully',
   },
   error: {
     BAD_REQUEST: 'Invalid request',
@@ -31,7 +34,7 @@ const messages = Object.freeze({
     INVALID_ID: 'ID must be a number',
     REQUIRED_FIELDS: 'Name, username, and email are required',
     REL_PATH_REQUIRED: 'Relative path must be provided',
-    UNKNOWN_TYPE: 'Unknown error type',
+    UNKNOWN_TYPE: 'Something went wrong',
     CACHE_DATA_EMPTY: 'Key and file must be provided',
     CACHE_KEY_EMPTY: 'Key must be provided',
     INVALID_CONTENT: 'Invalid content',
@@ -50,12 +53,16 @@ const errors = Object.freeze({
     createError(customMessage, 500),
 });
 
-const errorHandler = (err, req, res, next) => {
-  const { statusCode = 500, message = 'Something went wrong', status } = err;
+const errorHandler = (error, req, res, next) => {
+  const { statusCode = 500, message = messages.error.INTERNAL_SERVER, status } = error;
 
   res.status(statusCode).json({
     status,
+    statusCode,
     message,
+    timestamp: new Date().toISOString(),
+    path: req.originalUrl,
+    method: req.method,
   });
 };
 

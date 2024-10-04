@@ -16,7 +16,6 @@ const modifyFile = async (filePath, content) => {
     const fileName = getFileName(filePath);
     await fs.writeFile(filePath, content);
     cacheService.clearCache(fileName);
-    return { status: 200, message: messages.success.FILE_UPDATED };
   } catch (error) {
     if (error.code === 'ENOENT') {
       throw errors.NOT_FOUND();
