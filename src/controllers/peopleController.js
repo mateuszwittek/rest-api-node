@@ -1,27 +1,38 @@
+import Person from '../models/person.js';
 import messages from '../utils/messages.js';
-import { getFileData } from '../utils/getFileData.js';
-import { modifyFile } from '../utils/modifyFile.js';
-import { getFileDir } from '../utils/getFileDir.js';
-import { generateNewID } from '../utils/generateNewID.js';
 import { errors } from '../utils/errorHandler.js';
 import { successHandler } from '../utils/successHandler.js';
 
-const peopleFilePath = getFileDir('/people-data.json');
-
 const getPeopleData = async () => {
   try {
-    return await getFileData(peopleFilePath);
+    return await Person.find({}, { _id: 0 });
   } catch (error) {
-    throw errors.INTERNAL_SERVER(messages.error.READING_FILE);
+    throw errors.INTERNAL_SERVER(messages.error.DATABASE_QUERY_EXECUTION_ERROR);
   }
 };
 
-const modifyPeopleData = async data => {
+const getPersonData = async id => {
   try {
-    await modifyFile(peopleFilePath, JSON.stringify(data, null, 2));
-    successHandler(res, people);
+    const person = await Person.findOne({ id }, { _id: 0 });
+    if (!person) {
+      throw errors.NOT_FOUND(messages.error.PERSON_NOT_FOUND);
+    }
+    return person;
   } catch (error) {
-    throw errors.INTERNAL_SERVER(messages.error.WRITING_FILE);
+    if (error.name === 'CastError') {
+      throw errors.BAD_REQUEST(messages.error.INVALID_ID);
+    }
+    throw error;
+  }
+};
+const addPeopleData = async person => {
+  try {
+    return await Person.create(person);
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      throw errors.BAD_REQUEST(messages.error.VALIDATION_ERROR);
+    }
+    throw errors.INTERNAL_SERVER(messages.error.DATABASE_WRITE_CONCERN_ERROR);
   }
 };
 
@@ -34,21 +45,10 @@ const getAllPeople = async (req, res, next) => {
   }
 };
 
-const getPersonByID = async (req, res, next) => {
-  const id = Number(req.params.id);
-
-  if (isNaN(id)) {
-    return next(errors.BAD_REQUEST(messages.error.INVALID_ID));
-  }
-
+const getPerson = async (req, res, next) => {
   try {
-    const people = await getPeopleData();
-    const person = people.find(person => person.id === id);
-
-    if (!person) {
-      return next(errors.NOT_FOUND(messages.error.PERSON_NOT_FOUND));
-    }
-
+    const id = Number(req.params.id);
+    const person = await getPersonData(id);
     successHandler(res, messages.success.PERSON_RETRIEVED, person);
   } catch (error) {
     next(error);
@@ -56,26 +56,17 @@ const getPersonByID = async (req, res, next) => {
 };
 
 const addPerson = async (req, res, next) => {
-  const { name, username, email } = req.body;
-
-  if (!name || !username || !email) {
-    return next(errors.BAD_REQUEST(messages.error.REQUIRED_FIELDS));
-  }
-
   try {
-    const people = await getPeopleData();
-    const newPerson = {
-      id: generateNewID(people),
-      name,
-      username,
-      email,
-    };
-    const newPeople = [...people, newPerson];
-    await modifyPeopleData(newPeople);
-    successHandler(res, messages.success.PERSON_ADDED, newPerson, 201);
+    const { name, username, email } = req.body;
+
+    if (!name || !username || !email) {
+      return next(errors.BAD_REQUEST(messages.error.REQUIRED_FIELDS));
+    }
+    const newPerson = { name, username, email };
+    const createdPerson = await addPeopleData(newPerson);
+    successHandler(res, messages.success.PERSON_ADDED, createdPerson, 201);
   } catch (error) {
     next(error);
   }
 };
-
-export { getAllPeople, getPersonByID, addPerson };
+export { getAllPeople, getPerson, addPerson };

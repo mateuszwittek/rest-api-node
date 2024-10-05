@@ -1,7 +1,7 @@
 import messages from './messages.js';
 
 class AppError extends Error {
-  constructor(message, statusCode) {
+  constructor(message = messages.error.UNKNOWN_TYPE, statusCode = 500) {
     super(message);
 
     this.name = this.constructor.name;
@@ -26,7 +26,11 @@ const errors = Object.freeze({
 });
 
 const errorHandler = (error, req, res, next) => {
-  const { statusCode = 500, message = messages.error.INTERNAL_SERVER, status } = error;
+  const {
+    statusCode = 500,
+    message = messages.error.INTERNAL_SERVER,
+    status = messages.error.ERROR,
+  } = error;
 
   res.status(statusCode).json({
     status,
