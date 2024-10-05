@@ -29,6 +29,7 @@ const messages = Object.freeze({
     DATABASE_INDEX_CREATION_FAILED: 'Failed to create database index',
     DATABASE_QUERY_EXECUTION_ERROR: 'Error occurred while executing database query',
     DATABASE_VALIDATION_ERROR: 'Database validation failed',
+    PERSON_NOT_FOUND: 'Person not found',
     ID_REQUIRED: 'Person ID is required',
     VALIDATION_ERROR: 'Data validation error',
     REQUIRED_FIELDS: 'Required fields are missing',
