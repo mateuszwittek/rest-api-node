@@ -1,6 +1,6 @@
 # Rest API Node
 
-This is a simple REST API built with Node.js, Express.js and MongoDB, providing endpoints for managing people data.
+This project is a RESTful API built with Node.js, Express.js, MongoDB and using TypeScript.
 
 ## Getting Started
 
@@ -35,21 +35,28 @@ NODE_ENV=development
 DATABASE_URI=YOUR_MONGODB_URI
 ```
 
-Then start the server:
+## Running the Application
 
-```bash
-npm start
-```
+### Development
 
-App is running on specified port.
-
-For development purposes, you can use nodemon to automatically restart the server when file changes are detected. To start the server with nodemon, use the following command:
+To run the application in development mode, use the following command:
 
 ```bash
 npm run dev
 ```
 
-This will start the server and watch for any changes in the src and config directories and the .env file.
+It uses nodemon to watch for file changes and restart the server automatically.
+
+### Production
+
+Build the TypeScript files and start the server:
+
+```bash
+npm run build
+npm run start
+```
+
+The app will run on specified port.
 
 ## Endpoints
 
