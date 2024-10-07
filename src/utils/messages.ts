@@ -1,4 +1,6 @@
-const messages = Object.freeze({
+import { TMessages } from '../types/types';
+
+export const messages: TMessages = Object.freeze({
   success: {
     SUCCESS: 'Success',
     API_SUCCESS: 'Operation successful',
@@ -15,6 +17,7 @@ const messages = Object.freeze({
     UNAUTHORIZED: 'Authentication failed',
     FORBIDDEN: 'Access denied',
     NOT_FOUND: 'Resource not found',
+    ENV_DATABASE_URI: 'DATABASE_URI environment variable is not defined',
     INTERNAL_SERVER: 'Internal server error',
     DATABASE_ERROR: 'Database operation failed',
     DATABASE_DISCONNECTION_ERROR: 'Database disconnection failed',

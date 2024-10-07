@@ -1,10 +1,10 @@
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import connectDB from './config/database.js';
 import peopleRouter from './routes/peopleRoutes.js';
 import { errorHandler } from './utils/errorHandler.js';
 
-const app = express();
+const app: Application = express();
 
 connectDB();
 

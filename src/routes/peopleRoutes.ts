@@ -1,7 +1,7 @@
 import express from 'express';
 import { getAllPeople, getPerson, addPerson } from '../controllers/peopleController.js';
 
-const peopleRouter = express.Router();
+const peopleRouter: express.Router = express.Router();
 
 peopleRouter.get('/', getAllPeople);
 peopleRouter.get('/:id', getPerson);

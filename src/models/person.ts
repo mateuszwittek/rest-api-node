@@ -1,7 +1,8 @@
-import mongoose from 'mongoose';
+import { IPerson, IPersonDocument, IPersonModel } from '../types/types';
+import mongoose, { Document } from 'mongoose';
 import messages from '../utils/messages.js';
 
-const PersonSchema = new mongoose.Schema({
+const PersonSchema = new mongoose.Schema<IPersonDocument>({
   id: {
     type: Number,
     unique: true,
@@ -22,13 +23,17 @@ const PersonSchema = new mongoose.Schema({
   },
 });
 
-PersonSchema.pre('validate', async function (next) {
+PersonSchema.pre<IPersonDocument>('validate', async function (next) {
   if (this.isNew && !this.id) {
     try {
-      const lastPerson = await this.constructor.findOne({}, {}, { sort: { id: -1 } });
+      const lastPerson = await (this.constructor as IPersonModel).findOne(
+        {},
+        {},
+        { sort: { id: -1 } }
+      );
       this.id = lastPerson && lastPerson.id ? lastPerson.id + 1 : 1;
     } catch (error) {
-      return next(error);
+      return next(error as Error);
     }
   }
   next();
@@ -36,6 +41,6 @@ PersonSchema.pre('validate', async function (next) {
 
 PersonSchema.path('id').required(true, messages.error.ID_REQUIRED);
 
-const Person = mongoose.model('Person', PersonSchema);
+const Person = mongoose.model<IPersonDocument, IPersonModel>('Person', PersonSchema);
 
 export default Person;
