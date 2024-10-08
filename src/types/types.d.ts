@@ -61,15 +61,12 @@ export interface IErrorResponse {
 }
 
 export interface IPerson {
-  id: number;
   name: string;
   username: string;
   email: string;
 }
 
-export interface IPersonDocument extends Omit<IPerson, 'id'>, Document {
-  id: number;
-}
+export interface IPersonDocument extends IPerson, Document {}
 export interface IPersonModel extends Model<IPersonDocument> {}
 
 export interface IControllerFunction {
@@ -85,5 +82,5 @@ export interface IGetPersonData {
 }
 
 export interface IAddPersonData {
-  (person: Omit<IPerson, 'id'>): Promise<IPersonDocument>; // because id is generated automatically in pre-validation hook in Person schema
+  (person: IPerson): Promise<IPersonDocument>;
 }
