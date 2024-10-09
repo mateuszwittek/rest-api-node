@@ -1,7 +1,7 @@
 import { IControllerFunction } from '../types/types';
 import { getPeopleData, getPersonData, addPeopleData } from '../services/peopleService.js';
 import messages from '../utils/messages.js';
-import { successHandler } from '../utils/successHandler.js';
+import { successHandler } from '../middleware/successHandler.js';
 
 const getAllPeople: IControllerFunction = async (req, res, next) => {
   try {

@@ -1,6 +1,6 @@
 import { IAddPersonData, IGetPeopleData, IGetPersonData } from '../types/types';
 import Person from '../models/person.js';
-import { createError } from '../utils/errorHandler.js';
+import { createError } from '../middleware/errorHandler.js';
 import messages from '../utils/messages.js';
 
 const getPeopleData: IGetPeopleData = async () => {

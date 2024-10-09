@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
-import messages from './messages.js';
+import messages from '../utils/messages.js';
 import { createError } from './errorHandler.js';
 
 const validateCallback = (req: Request, res: Response, next: NextFunction): void => {

@@ -1,24 +1,7 @@
 import { MongoServerError } from 'mongodb';
-import { ICreateError, IAppError, IErrorHandler, IErrorResponse, TErrors } from '../types/types';
-import messages from './messages.js';
-import app from '../app';
-
-class AppError extends Error implements IAppError {
-  status: string;
-  statusCode: number;
-
-  constructor(message = messages.error.UNKNOWN_TYPE, statusCode = 500) {
-    super(message);
-
-    this.status = (
-      `${statusCode}`.startsWith('4') ? messages.error.FAIL : messages.error.ERROR
-    ).toLowerCase();
-    this.statusCode = statusCode;
-  }
-}
-
-const createError: ICreateError = (customMessage = messages.error.UNKNOWN_TYPE, statusCode = 500) =>
-  new AppError(customMessage, statusCode);
+import { IErrorHandler, IErrorResponse } from '../types/types';
+import messages from '../utils/messages.js';
+import { AppError, createError } from '../utils/errorHelpers.js';
 
 const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
   let errorToHandle: AppError | undefined;

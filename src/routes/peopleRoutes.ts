@@ -1,5 +1,5 @@
 import express from 'express';
-import { validatePerson } from '../utils/validatePerson.js';
+import { validatePerson } from '../middleware/validatePerson.js';
 import { getAllPeople, getPerson, addPerson } from '../controllers/peopleController.js';
 
 const peopleRouter: express.Router = express.Router();

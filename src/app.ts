@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/database.js';
 import peopleRouter from './routes/peopleRoutes.js';
-import { createError, errorHandler } from './utils/errorHandler.js';
+import { createError, errorHandler } from './middleware/errorHandler.js';
 import messages from './utils/messages.js';
 
 const app: express.Application = express();

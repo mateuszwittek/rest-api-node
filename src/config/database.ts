@@ -2,7 +2,7 @@ import { IDatabaseConfig, IDatabaseFunction, ISignalHandler } from '../types/typ
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import messages from '../utils/messages.js';
-import { createError } from '../utils/errorHandler.js';
+import { createError } from '../middleware/errorHandler.js';
 
 dotenv.config();
 
