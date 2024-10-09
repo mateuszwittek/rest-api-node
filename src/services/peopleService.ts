@@ -15,7 +15,7 @@ const getPersonData: IGetPersonData = async param => {
   try {
     const person = await Person.findOne({ $or: [{ email: param }, { username: param }] });
     if (!person) {
-      throw createError(messages.error.PERSON_NOT_FOUND, 400);
+      throw createError(messages.error.PERSON_NOT_FOUND, 404);
     }
     return person;
   } catch (error) {

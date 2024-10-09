@@ -6,11 +6,11 @@ import { createError } from '../utils/errorHandler.js';
 
 dotenv.config();
 
-const config: IDatabaseConfig = {
+const dbConfig: IDatabaseConfig = {
   uri: process.env.DATABASE_URI || '',
 };
 
-const connectDB: IDatabaseFunction = async () => {
+const connectDB: IDatabaseFunction = async (config: IDatabaseConfig = dbConfig) => {
   try {
     if (!process.env.DATABASE_URI) {
       throw createError(messages.error.ENV_DATABASE_URI);

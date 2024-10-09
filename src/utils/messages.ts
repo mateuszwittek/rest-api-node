@@ -36,6 +36,7 @@ export const messages: TMessages = Object.freeze({
     INVALID_JSON: 'Invalid JSON in request body',
     SYNTAX_ERROR: 'A syntax error occurred',
     PERSON_NOT_FOUND: 'Person not found',
+    PERSON_ALREADY_EXISTS: 'Person already exists',
     ID_REQUIRED: 'Person ID is required',
     VALIDATION_ERROR: 'Data validation error',
     REQUIRED_FIELDS: 'Required fields are missing',

@@ -13,7 +13,7 @@ export interface IDatabaseConfig {
 }
 
 export interface IDatabaseFunction {
-  (): Promise<void>;
+  (config?: IDatabaseConfig): Promise<void>;
 }
 
 export interface ISignalHandler {
