@@ -78,7 +78,7 @@ export interface IGetPeopleData {
 }
 
 export interface IGetPersonData {
-  (id: number): Promise<IPerson>;
+  (param: string): Promise<IPerson>;
 }
 
 export interface IAddPersonData {

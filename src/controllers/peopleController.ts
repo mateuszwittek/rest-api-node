@@ -15,8 +15,8 @@ const getAllPeople: IControllerFunction = async (req, res, next) => {
 
 const getPerson: IControllerFunction = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    const person = await getPersonData(id);
+    const param = req.params.param;
+    const person = await getPersonData(param);
     successHandler(res, messages.success.PERSON_RETRIEVED, person);
   } catch (error) {
     next(error as Error);

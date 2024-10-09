@@ -4,7 +4,7 @@ import { getAllPeople, getPerson, addPerson } from '../controllers/peopleControl
 const peopleRouter: express.Router = express.Router();
 
 peopleRouter.get('/', getAllPeople);
-peopleRouter.get('/:id', getPerson);
+peopleRouter.get('/:param', getPerson);
 peopleRouter.post('/', addPerson);
 
 export default peopleRouter;
