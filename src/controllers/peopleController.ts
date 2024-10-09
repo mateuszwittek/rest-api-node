@@ -1,7 +1,6 @@
 import { IControllerFunction } from '../types/types';
 import { getPeopleData, getPersonData, addPeopleData } from '../services/peopleService.js';
 import messages from '../utils/messages.js';
-import { errors } from '../utils/errorHandler.js';
 import { successHandler } from '../utils/successHandler.js';
 
 const getAllPeople: IControllerFunction = async (req, res, next) => {
@@ -26,10 +25,6 @@ const getPerson: IControllerFunction = async (req, res, next) => {
 const addPerson: IControllerFunction = async (req, res, next) => {
   try {
     const { name, username, email } = req.body;
-
-    if (!name || !username || !email) {
-      return next(errors.BAD_REQUEST(messages.error.REQUIRED_FIELDS));
-    }
     const newPerson = { name, username, email };
     const createdPerson = await addPeopleData(newPerson);
     successHandler(res, messages.success.PERSON_ADDED, createdPerson, 201);

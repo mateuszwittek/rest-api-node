@@ -1,52 +1,54 @@
+import { MongoServerError } from 'mongodb';
 import { ICreateError, IAppError, IErrorHandler, IErrorResponse, TErrors } from '../types/types';
 import messages from './messages.js';
+import app from '../app';
 
 class AppError extends Error implements IAppError {
-  statusCode: number;
   status: string;
-  isOperational: boolean;
+  statusCode: number;
 
   constructor(message = messages.error.UNKNOWN_TYPE, statusCode = 500) {
     super(message);
 
-    this.name = this.constructor.name;
+    this.status = (
+      `${statusCode}`.startsWith('4') ? messages.error.FAIL : messages.error.ERROR
+    ).toLowerCase();
     this.statusCode = statusCode;
-    this.status = `${statusCode}`.startsWith('4')
-      ? messages.error.FAIL.toLowerCase()
-      : messages.error.ERROR.toLowerCase();
-    this.isOperational = true;
   }
 }
 
-const createError: ICreateError = (customMessage, statusCode) =>
-  new AppError(customMessage || messages.error.UNKNOWN_TYPE, statusCode);
+const createError: ICreateError = (customMessage = messages.error.UNKNOWN_TYPE, statusCode = 500) =>
+  new AppError(customMessage, statusCode);
 
-const errors: TErrors = Object.freeze({
-  BAD_REQUEST: (customMessage = messages.error.BAD_REQUEST) => createError(customMessage, 400),
-  UNAUTHORIZED: (customMessage = messages.error.UNAUTHORIZED) => createError(customMessage, 401),
-  FORBIDDEN: (customMessage = messages.error.FORBIDDEN) => createError(customMessage, 403),
-  NOT_FOUND: (customMessage = messages.error.NOT_FOUND) => createError(customMessage, 404),
-  INTERNAL_SERVER: (customMessage = messages.error.INTERNAL_SERVER) =>
-    createError(customMessage, 500),
-});
+const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
+  let errorToHandle: AppError | undefined;
 
-const errorHandler: IErrorHandler = (error, req, res, next) => {
-  const {
-    statusCode = 500,
-    message = messages.error.INTERNAL_SERVER,
-    status = messages.error.ERROR,
-  } = error;
+  if (error instanceof MongoServerError && error.code === 11000) {
+    console.log('duplicate key error');
+    errorToHandle = createError(messages.error.DATABASE_DUPLICATE, 400);
+  } else if (error instanceof AppError) {
+    errorToHandle = error;
+  } else if (error instanceof SyntaxError && error.message.includes('JSON')) {
+    errorToHandle = createError(messages.error.INVALID_JSON, 400);
+  } else if (error instanceof SyntaxError) {
+    errorToHandle = createError(messages.error.SYNTAX_ERROR);
+  } else {
+    errorToHandle = createError(error.message, 500);
+  }
+
+  if (!errorToHandle) {
+    errorToHandle = createError(messages.error.UNKNOWN_TYPE, 500);
+  }
 
   const responseObj: IErrorResponse = {
-    status,
-    statusCode,
-    message,
+    ...errorToHandle,
+    message: errorToHandle.message,
     timestamp: new Date().toISOString(),
     path: req.originalUrl,
     method: req.method,
   };
 
-  res.status(statusCode).json(responseObj);
+  res.status(responseObj.statusCode).json(responseObj);
 };
 
-export { errors, errorHandler };
+export { createError, errorHandler };

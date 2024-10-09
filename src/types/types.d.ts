@@ -36,19 +36,18 @@ export interface ISuccessHandler {
 
 export interface IAppError extends Error {
   name: string;
-  statusCode: number;
   status: string;
-  isOperational: boolean;
+  statusCode: number;
 }
 
 export interface ICreateError {
-  (customMessage: string, statusCode: number): IAppError;
+  (customMessage?: string, statusCode?: number): IAppError;
 }
 
 export type TErrors = Readonly<Record<string, (customMessage?: string) => Error>>;
 
 export interface IErrorHandler {
-  (error: IAppError, req: Request, res: Response, next?: NextFunction): void;
+  (error: Error, req: Request, res: Response, next?: NextFunction): void;
 }
 
 export interface IErrorResponse {

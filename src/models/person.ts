@@ -1,6 +1,5 @@
-import { IPerson, IPersonDocument, IPersonModel } from '../types/types';
-import mongoose, { Document } from 'mongoose';
-import messages from '../utils/messages.js';
+import { IPersonDocument, IPersonModel } from '../types/types';
+import mongoose from 'mongoose';
 
 const PersonSchema = new mongoose.Schema<IPersonDocument>({
   name: {
