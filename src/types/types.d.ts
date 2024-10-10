@@ -65,6 +65,11 @@ export interface IPerson {
   email: string;
 }
 
+export interface IInvalidDataCase {
+  description: string;
+  data: Partial<IPerson>;
+}
+
 export interface IPersonDocument extends IPerson, Document {}
 export interface IPersonModel extends Model<IPersonDocument> {}
 

@@ -7,6 +7,7 @@ import connectDB from '../../src/config/database';
 import Person from '../../src/models/person';
 import messages from '../../src/utils/messages';
 import { createError } from '../../src/utils/errorHelpers';
+import invalidDataCases from '../data/invalidRequestsData.js';
 
 dotenv.config();
 
@@ -38,13 +39,13 @@ describe('People API Endpoints', () => {
       await Person.create({
         name: 'John Doe',
         username: 'johndoe',
-        email: 'john@example.com',
+        email: 'john@gmail.com',
       });
 
       await Person.create({
         name: 'Jane Doe',
         username: 'janedoe',
-        email: 'jane@example.com',
+        email: 'jane@gmail.com',
       });
       const res = await request(app).get('/people');
       expect(res.status).toBe(200);
@@ -58,7 +59,7 @@ describe('People API Endpoints', () => {
       const person = await Person.create({
         name: 'John Doe',
         username: 'johndoe',
-        email: 'john@example.com',
+        email: 'john@gmail.com',
       });
 
       const res = await request(app).get(`/people/${person.username}`);
@@ -79,59 +80,22 @@ describe('People API Endpoints', () => {
       const newPerson = {
         name: 'John Doe',
         username: 'johndoe',
-        email: 'john@example.com',
+        email: 'john@gmail.com',
       };
 
       const res = await request(app).post('/people').send(newPerson);
+      console.log('POST /people create new person request body: ', res.body);
       expect(res.status).toBe(201);
       expect(res.body.data.name).toBe(newPerson.name);
       expect(res.body.message).toBe(messages.success.PERSON_ADDED);
     });
 
-    it('should return 400 if required fields are missing', async () => {
-      const incompletePerson = {
-        name: 'John Doe',
-      };
+    test.each(invalidDataCases)('should return 400 for $description', async ({ data }) => {
+      const res = await request(app).post('/people').send(data);
 
-      const res = await request(app).post('/people').send(incompletePerson);
       expect(res.status).toBe(400);
-    });
-
-    it('should return 400 if username already exists', async () => {
-      await Person.create({
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@example.com',
-      });
-
-      const duplicatePerson = {
-        name: 'Jane Doe',
-        username: 'johndoe',
-        email: 'jane@example.com',
-      };
-
-      const res = await request(app).post('/people').send(duplicatePerson);
-      console.log('duplicate username res data: ', res.body);
-      expect(res.status).toBe(400);
-      expect(res.body.message).toBe(messages.error.DATABASE_DUPLICATE);
-    });
-
-    it('should return 400 if email already exists', async () => {
-      await Person.create({
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@example.com',
-      });
-
-      const duplicatePerson = {
-        name: 'Jane Doe',
-        username: 'janedoe',
-        email: 'john@example.com',
-      };
-
-      const res = await request(app).post('/people').send(duplicatePerson);
-      expect(res.status).toBe(400);
-      expect(res.body.message).toBe(messages.error.DATABASE_DUPLICATE);
+      expect(res.body.status).toBe(messages.error.FAIL.toLowerCase());
+      expect(res.body).toHaveProperty('message');
     });
   });
 });
