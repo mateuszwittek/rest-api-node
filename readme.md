@@ -98,8 +98,7 @@ The following scenarios are used to test the application:
   - GET /people: Should return all people when they exist
   - GET /people/:param: Should retrieve a specific person
   - POST /people: Should create a new person
-    - Should reject requests with missing required fields
-    - Should reject requests with duplicate usernames or emails
+    - Should return 400 for invalid data
 - Error Handling
   - Should handle internal server errors
   - Should handle 404 errors for non-existent routes
