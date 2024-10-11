@@ -1,6 +1,7 @@
 import { MongoServerError } from 'mongodb';
 import { IErrorHandler, IErrorResponse } from '../types/types';
 import messages from '../utils/messages.js';
+import { sanitize } from './../utils/sanitize.js';
 import { AppError, createError } from '../utils/errorHelpers.js';
 
 const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
@@ -31,7 +32,7 @@ const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
     method: req.method,
   };
 
-  res.status(responseObj.statusCode).json(responseObj);
+  res.status(responseObj.statusCode).json(sanitize(responseObj));
 };
 
 export { createError, errorHandler };
