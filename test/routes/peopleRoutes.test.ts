@@ -1,13 +1,17 @@
-import { IDatabaseConfig } from '../../src/types/types';
+import express from 'express';
+import { IControllerFunction, IDatabaseConfig } from '../../src/types/types';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
+import rateLimiter from '../../src/middleware/rateLimiter.js';
 import app from '../../src/app';
 import connectDB from '../../src/config/database';
 import Person from '../../src/models/person';
 import messages from '../../src/utils/messages';
 import { createError } from '../../src/utils/errorHelpers';
 import invalidDataCases from '../data/invalidRequestsData.js';
+import { successHandler } from '../../src/middleware/successHandler.js';
 
 dotenv.config();
 
@@ -97,6 +101,56 @@ describe('People API Endpoints', () => {
       expect(res.body.status).toBe(messages.error.FAIL.toLowerCase());
       expect(res.body).toHaveProperty('message');
     });
+  });
+});
+
+describe('Rate Limiter', () => {
+  let app: express.Express;
+  const router: express.Router = express.Router();
+  const getData: IControllerFunction = async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    successHandler(res, messages.success.SUCCESS, {}, 200);
+  };
+
+  beforeEach(() => {
+    app = express();
+    const testLimiter = rateLimit({
+      ...rateLimiter,
+      windowMs: 1000,
+      max: 5,
+    });
+    app.use(testLimiter);
+    router.get('/test', getData);
+    app.use(router);
+  });
+
+  it('should allow requests within the rate limit', async () => {
+    for (let i = 0; i < 5; i++) {
+      const res = await request(app).get('/test');
+      expect(res.status).toBe(200);
+    }
+  });
+
+  it('should block requests exceeding the rate limit', async () => {
+    for (let i = 0; i < 5; i++) {
+      await request(app).get('/test');
+    }
+    const res = await request(app).get('/test');
+    expect(res.status).toBe(429);
+  });
+
+  it('should allow requests again after the window has passed', async () => {
+    for (let i = 0; i < 5; i++) {
+      await request(app).get('/test');
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const res = await request(app).get('/test');
+    expect(res.status).toBe(200);
   });
 });
 

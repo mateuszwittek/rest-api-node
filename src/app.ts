@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import connectDB from './config/database.js';
 import peopleRouter from './routes/peopleRoutes.js';
 import { createError, errorHandler } from './middleware/errorHandler.js';
 import messages from './utils/messages.js';
+import limiter from './middleware/rateLimiter.js';
 
 const app: express.Application = express();
 
+app.use(limiter);
 app.use(cors());
 app.use(express.json());
 
