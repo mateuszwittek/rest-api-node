@@ -173,3 +173,25 @@ describe('Error Handling', () => {
     jest.restoreAllMocks();
   });
 });
+
+describe('Security', () => {
+  it('should set appropriate security headers', async () => {
+    const res = await request(app).get('/people');
+
+    expect(res.headers['content-security-policy']).toBe(
+      "default-src 'none';connect-src 'self';base-uri 'none';font-src 'none';form-action 'none';frame-ancestors 'none';img-src 'none';object-src 'none';script-src 'none';script-src-attr 'none';style-src 'none'"
+    );
+
+    expect(res.headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
+
+    expect(res.headers['x-xss-protection']).toBe('0');
+    expect(res.headers['x-frame-options']).toBe('DENY');
+    expect(res.headers['x-content-type-options']).toBe('nosniff');
+    expect(res.headers['strict-transport-security']).toBe('max-age=31536000; includeSubDomains');
+  });
+
+  it('should not include X-Powered-By header', async () => {
+    const response = await request(app).get('/');
+    expect(response.headers['x-powered-by']).toBeUndefined();
+  });
+});

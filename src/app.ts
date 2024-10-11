@@ -1,4 +1,6 @@
 import express from 'express';
+import helmet from 'helmet';
+import helmetConfig from './config/helmetConfig.js';
 import cors from 'cors';
 import peopleRouter from './routes/peopleRoutes.js';
 import { createError, errorHandler } from './middleware/errorHandler.js';
@@ -7,6 +9,7 @@ import limiter from './middleware/rateLimiter.js';
 
 const app: express.Application = express();
 
+app.use(helmet(helmetConfig));
 app.use(limiter);
 app.use(cors());
 app.use(express.json());
