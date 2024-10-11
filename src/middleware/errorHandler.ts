@@ -8,7 +8,6 @@ const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
   let errorToHandle: AppError | undefined;
 
   if (error instanceof MongoServerError && error.code === 11000) {
-    console.log('duplicate key error');
     errorToHandle = createError(messages.error.DATABASE_DUPLICATE, 400);
   } else if (error instanceof AppError) {
     errorToHandle = error;

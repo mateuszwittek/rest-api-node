@@ -88,7 +88,6 @@ describe('People API Endpoints', () => {
       };
 
       const res = await request(app).post('/people').send(newPerson);
-      console.log('POST /people create new person request body: ', res.body);
       expect(res.status).toBe(201);
       expect(res.body.data.name).toBe(newPerson.name);
       expect(res.body.message).toBe(messages.success.PERSON_ADDED);
@@ -193,5 +192,22 @@ describe('Security', () => {
   it('should not include X-Powered-By header', async () => {
     const response = await request(app).get('/');
     expect(response.headers['x-powered-by']).toBeUndefined();
+  });
+
+  it('should set appropriate CORS headers', async () => {
+    const res = await request(app)
+      .options('/people')
+      .set('Origin', `http://localhost:3001`)
+      .set('Access-Control-Request-Method', 'GET');
+
+    expect(res.headers['access-control-allow-origin']).toBe(`http://localhost:3001`);
+    expect(res.headers['access-control-allow-methods']).toBe('GET,POST,PUT,DELETE,OPTIONS');
+    expect(res.headers['access-control-allow-credentials']).toBe('true');
+  });
+
+  it('should reject requests from non-allowed origins', async () => {
+    const res = await request(app).get('/people').set('Origin', 'http://localhost.com:4000');
+
+    expect(res.headers['access-control-allow-origin']).toBeUndefined();
   });
 });
