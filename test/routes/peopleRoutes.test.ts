@@ -19,6 +19,8 @@ const dbConfig = {
   uri: process.env.TEST_DATABASE_URI || '',
 };
 
+const API_PATH = '/api/v1';
+
 beforeAll(async () => {
   await connectDB(dbConfig as IDatabaseConfig);
 });
@@ -34,7 +36,8 @@ beforeEach(async () => {
 describe('People API Endpoints', () => {
   describe('GET /people', () => {
     it('should return an empty array when no people exist', async () => {
-      const res = await request(app).get('/people');
+      const res = await request(app).get(`${API_PATH}/people`);
+      console.log('request info: ', res.body);
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveLength(0);
       expect(res.body.message).toBe(messages.success.PEOPLE_RETRIEVED);
@@ -51,7 +54,7 @@ describe('People API Endpoints', () => {
         username: 'janedoe',
         email: 'jane@gmail.com',
       });
-      const res = await request(app).get('/people');
+      const res = await request(app).get(`${API_PATH}/people`);
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveLength(2);
       expect(res.body.message).toBe(messages.success.PEOPLE_RETRIEVED);
@@ -66,14 +69,14 @@ describe('People API Endpoints', () => {
         email: 'john@gmail.com',
       });
 
-      const res = await request(app).get(`/people/${person.username}`);
+      const res = await request(app).get(`${API_PATH}/people/${person.username}`);
       expect(res.status).toBe(200);
       expect(res.body.data.username).toBe(person.username);
       expect(res.body.message).toBe(messages.success.PERSON_RETRIEVED);
     });
 
     it('should return 404 if person does not exist', async () => {
-      const res = await request(app).get('/people/invalid-username');
+      const res = await request(app).get(`${API_PATH}/people/invalid-username`);
       expect(res.status).toBe(404);
       expect(res.body.message).toBe(messages.error.PERSON_NOT_FOUND);
     });
@@ -87,14 +90,14 @@ describe('People API Endpoints', () => {
         email: 'john@gmail.com',
       };
 
-      const res = await request(app).post('/people').send(newPerson);
+      const res = await request(app).post(`${API_PATH}/people`).send(newPerson);
       expect(res.status).toBe(201);
       expect(res.body.data.name).toBe(newPerson.name);
       expect(res.body.message).toBe(messages.success.PERSON_ADDED);
     });
 
     test.each(invalidDataCases)('should return 400 for $description', async ({ data }) => {
-      const res = await request(app).post('/people').send(data);
+      const res = await request(app).post(`${API_PATH}/people`).send(data);
 
       expect(res.status).toBe(400);
       expect(res.body.status).toBe(messages.error.FAIL.toLowerCase());
@@ -122,13 +125,13 @@ describe('Rate Limiter', () => {
       max: 5,
     });
     app.use(testLimiter);
-    router.get('/test', getData);
+    router.get(`${API_PATH}/test`, getData);
     app.use(router);
   });
 
   it('should allow requests within the rate limit', async () => {
     for (let i = 0; i < 5; i++) {
-      const res = await request(app).get('/test');
+      const res = await request(app).get(`${API_PATH}/test`);
       expect(res.status).toBe(200);
     }
   });
@@ -137,25 +140,25 @@ describe('Rate Limiter', () => {
     for (let i = 0; i < 5; i++) {
       await request(app).get('/test');
     }
-    const res = await request(app).get('/test');
+    const res = await request(app).get(`${API_PATH}/test`);
     expect(res.status).toBe(429);
   });
 
   it('should allow requests again after the window has passed', async () => {
     for (let i = 0; i < 5; i++) {
-      await request(app).get('/test');
+      await request(app).get(`${API_PATH}/test`);
     }
 
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const res = await request(app).get('/test');
+    const res = await request(app).get(`${API_PATH}/test`);
     expect(res.status).toBe(200);
   });
 });
 
 describe('Error Handling', () => {
   it('should handle 404 errors for non-existent routes', async () => {
-    const res = await request(app).get('/non-existent-route');
+    const res = await request(app).get(`${API_PATH}/non-existent-route`);
     expect(res.status).toBe(404);
     expect(res.body.message).toBe(messages.error.NOT_FOUND);
   });
@@ -165,7 +168,7 @@ describe('Error Handling', () => {
       throw createError(messages.error.DATABASE_QUERY_EXECUTION_ERROR);
     });
 
-    const res = await request(app).get('/people');
+    const res = await request(app).get(`${API_PATH}/people`);
     expect(res.status).toBe(500);
     expect(res.body.message).toBe(messages.error.DATABASE_QUERY_EXECUTION_ERROR);
 
@@ -175,7 +178,7 @@ describe('Error Handling', () => {
 
 describe('Security', () => {
   it('should set appropriate security headers', async () => {
-    const res = await request(app).get('/people');
+    const res = await request(app).get(`${API_PATH}/people`);
 
     expect(res.headers['content-security-policy']).toBe(
       "default-src 'none';connect-src 'self';base-uri 'none';font-src 'none';form-action 'none';frame-ancestors 'none';img-src 'none';object-src 'none';script-src 'none';script-src-attr 'none';style-src 'none'"
@@ -190,13 +193,13 @@ describe('Security', () => {
   });
 
   it('should not include X-Powered-By header', async () => {
-    const response = await request(app).get('/');
+    const response = await request(app).get(`${API_PATH}/`);
     expect(response.headers['x-powered-by']).toBeUndefined();
   });
 
   it('should set appropriate CORS headers', async () => {
     const res = await request(app)
-      .options('/people')
+      .options(`${API_PATH}/people`)
       .set('Origin', `http://localhost:3001`)
       .set('Access-Control-Request-Method', 'GET');
 
@@ -206,7 +209,9 @@ describe('Security', () => {
   });
 
   it('should reject requests from non-allowed origins', async () => {
-    const res = await request(app).get('/people').set('Origin', 'http://localhost.com:4000');
+    const res = await request(app)
+      .get(`${API_PATH}/people`)
+      .set('Origin', 'http://localhost.com:4000');
 
     expect(res.headers['access-control-allow-origin']).toBeUndefined();
   });
