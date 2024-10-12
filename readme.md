@@ -62,11 +62,13 @@ The app will run on specified port.
 
 ## Endpoints
 
+This API uses URL path versioning. The current version is v1. All endpoints should be prefixed with /api/v1.
+
 ### /people
 
-- `GET /people`: Returns a list of all people from the database.
-- `GET /people/:param`: Retrieves a specific person by parameter, email or username.
-- `POST /people`: Adds a new person to the database.
+- `GET api/v1/people`: Returns a list of all people from the database.
+- `GET api/v1/people/:param`: Retrieves a specific person by parameter, email or username.
+- `POST api/v1/people`: Adds a new person to the database.
 
 Request body for POST:
 
