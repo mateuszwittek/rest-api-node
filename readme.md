@@ -1,6 +1,6 @@
 # Rest API Node
 
-This project is a RESTful API built with Node.js, Express.js, MongoDB, Jest and TypeScript.
+This project is a RESTful API built with Node.js, Express.js, MongoDB, Jest, and TypeScript.
 
 ## Getting Started
 
@@ -58,7 +58,7 @@ npm run build
 npm run start
 ```
 
-The app will run on specified port.
+The app will run on the specified port.
 
 ## Endpoints
 
@@ -67,7 +67,7 @@ This API uses URL path versioning. The current version is v1. All endpoints shou
 ### /people
 
 - `GET api/v1/people`: Returns a list of all people from the database.
-- `GET api/v1/people/:param`: Retrieves a specific person by parameter, email or username.
+- `GET api/v1/people/:param`: Retrieves a specific person by parameter, email, or username.
 - `POST api/v1/people`: Adds a new person to the database.
 
 Request body for POST:
@@ -86,13 +86,13 @@ This project uses [Jest](https://jestjs.io/) for unit and integration testing.
 
 ### Running Tests
 
-You can find tests in /test directory. To run them, use the following command:
+You can find tests in the /test directory. To run them, use the following command:
 
 ```bash
 npm run test
 ```
 
-### Tests Scenarios
+### Test Scenarios
 
 The following scenarios are used to test the application:
 
@@ -103,8 +103,11 @@ The following scenarios are used to test the application:
   - POST /people: Should create a new person
     - Should return 400 for invalid data
 - Error Handling
-  - Should handle internal server errors
-  - Should handle 404 errors for non-existent routes
+
+  - Should handle operational errors with specific messages
+  - Should handle non-operational errors with generic message in production
+  - Should provide error details in development mode
+
 - Rate Limiter
   - Should allow requests within the rate limit
   - Should block requests exceeding the rate limit
