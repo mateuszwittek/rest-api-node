@@ -4,14 +4,15 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
+import messages from '../../src/utils/messages.js';
 import rateLimiter from '../../src/middleware/rateLimiter.js';
 import app from '../../src/app';
 import connectDB from '../../src/config/database';
 import Person from '../../src/models/person';
-import messages from '../../src/utils/messages';
-import { createError } from '../../src/utils/errorHelpers';
 import invalidDataCases from '../data/invalidRequestsData.js';
 import { successHandler } from '../../src/middleware/successHandler.js';
+import { DatabaseError, NotFoundError } from '../../src/errors/customErrors.js';
+import { MongoError } from 'mongodb'; // Import MongoError for mocking
 
 dotenv.config();
 
@@ -37,11 +38,11 @@ describe('People API Endpoints', () => {
   describe('GET /people', () => {
     it('should return an empty array when no people exist', async () => {
       const res = await request(app).get(`${API_PATH}/people`);
-      console.log('request info: ', res.body);
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveLength(0);
       expect(res.body.message).toBe(messages.success.PEOPLE_RETRIEVED);
     });
+
     it('should return all people', async () => {
       await Person.create({
         name: 'John Doe',
@@ -78,7 +79,7 @@ describe('People API Endpoints', () => {
     it('should return 404 if person does not exist', async () => {
       const res = await request(app).get(`${API_PATH}/people/invalid-username`);
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe(messages.error.PERSON_NOT_FOUND);
+      expect(res.body.message).toBe(NotFoundError('person').message); // Use NotFoundError
     });
   });
 
@@ -100,7 +101,7 @@ describe('People API Endpoints', () => {
       const res = await request(app).post(`${API_PATH}/people`).send(data);
 
       expect(res.status).toBe(400);
-      expect(res.body.status).toBe(messages.error.FAIL.toLowerCase());
+      expect(res.body.status).toBe(messages.error.ERROR);
       expect(res.body).toHaveProperty('message');
     });
   });
@@ -157,22 +158,51 @@ describe('Rate Limiter', () => {
 });
 
 describe('Error Handling', () => {
-  it('should handle 404 errors for non-existent routes', async () => {
-    const res = await request(app).get(`${API_PATH}/non-existent-route`);
-    expect(res.status).toBe(404);
-    expect(res.body.message).toBe(messages.error.NOT_FOUND);
+  const originalEnv = process.env.NODE_ENV;
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalEnv;
   });
 
-  it('should handle internal server errors', async () => {
+  it('should handle operational errors with specific messages', async () => {
+    // Mock a MongoDB operational error
     jest.spyOn(Person, 'find').mockImplementationOnce(() => {
-      throw createError(messages.error.DATABASE_QUERY_EXECUTION_ERROR);
+      throw new MongoError('Simulated MongoDB error');
     });
 
     const res = await request(app).get(`${API_PATH}/people`);
     expect(res.status).toBe(500);
-    expect(res.body.message).toBe(messages.error.DATABASE_QUERY_EXECUTION_ERROR);
+    expect(res.body.message).toBe(DatabaseError('Failed to fetch people').message);
+    expect(res.body.status).toBe(messages.error.ERROR);
+  });
 
-    jest.restoreAllMocks();
+  it('should handle non-operational errors with generic message in production', async () => {
+    process.env.NODE_ENV = 'production';
+
+    jest.spyOn(Person, 'find').mockImplementationOnce(() => {
+      throw new Error('Unexpected error');
+    });
+
+    const res = await request(app).get(`${API_PATH}/people`);
+    expect(res.status).toBe(500);
+    expect(res.body.message).toBe(messages.error.INTERNAL_SERVER);
+    expect(res.body.status).toBe(messages.error.ERROR);
+  });
+
+  it('should include error details for non-operational errors in development', async () => {
+    process.env.NODE_ENV = 'development';
+    const errorMessage = 'Unexpected development error';
+
+    jest.spyOn(Person, 'find').mockImplementationOnce(() => {
+      throw new Error(errorMessage);
+    });
+
+    const res = await request(app).get(`${API_PATH}/people`);
+    expect(res.status).toBe(500);
+    expect(res.body.stack).toBeDefined();
+    expect(res.body.name).toBeDefined();
+    expect(res.body.cause).toBeDefined();
+    expect(res.body.status).toBe(messages.error.ERROR);
   });
 });
 

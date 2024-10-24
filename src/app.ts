@@ -4,8 +4,8 @@ import cors from 'cors';
 import helmetConfig from './config/helmetConfig.js';
 import corsConfig from './config/corsConfig.js';
 import router from './routes/v1/index.js';
-import { createError, errorHandler } from './middleware/errorHandler.js';
-import messages from './utils/messages.js';
+import errorHandler from './middleware/errorHandler.js';
+import { NotFoundError } from './errors/customErrors.js';
 import limiter from './middleware/rateLimiter.js';
 
 const app: express.Application = express();
@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use('/api', router);
 app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-  next(createError(messages.error.NOT_FOUND, 404));
+  next(NotFoundError('route'));
 });
 
 app.use(errorHandler);

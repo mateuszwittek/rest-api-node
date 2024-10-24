@@ -1,37 +1,24 @@
-import { MongoServerError } from 'mongodb';
-import { IErrorHandler, IErrorResponse } from '../types/types';
+import { IErrorHandler, IErrorResponse, IAppError } from '../types/types';
 import messages from '../utils/messages.js';
 import { sanitize } from './../utils/sanitize.js';
-import { AppError, createError } from '../utils/errorHelpers.js';
 
-const errorHandler: IErrorHandler = (error: Error, req, res, next) => {
-  let errorToHandle: AppError | undefined;
-
-  if (error instanceof MongoServerError && error.code === 11000) {
-    errorToHandle = createError(messages.error.DATABASE_DUPLICATE, 400);
-  } else if (error instanceof AppError) {
-    errorToHandle = error;
-  } else if (error instanceof SyntaxError && error.message.includes('JSON')) {
-    errorToHandle = createError(messages.error.INVALID_JSON, 400);
-  } else if (error instanceof SyntaxError) {
-    errorToHandle = createError(messages.error.SYNTAX_ERROR);
-  } else {
-    errorToHandle = createError(error.message, 500);
-  }
-
-  if (!errorToHandle) {
-    errorToHandle = createError(messages.error.UNKNOWN_TYPE, 500);
-  }
+const errorHandler: IErrorHandler = (error, req, res, next) => {
+  let status = 'Error';
+  let statusCode = error.statusCode || 500;
+  let message = error.isOperational ? error.message : messages.error.INTERNAL_SERVER;
 
   const responseObj: IErrorResponse = {
-    ...errorToHandle,
-    message: errorToHandle.message,
-    timestamp: new Date().toISOString(),
-    path: req.originalUrl,
-    method: req.method,
+    status,
+    statusCode,
+    message,
+    ...(process.env.NODE_ENV !== 'production' && {
+      stack: error.stack,
+      name: error.name,
+      cause: error.cause,
+    }),
   };
 
   res.status(responseObj.statusCode).json(sanitize(responseObj));
 };
 
-export { createError, errorHandler };
+export default errorHandler;

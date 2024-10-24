@@ -2,7 +2,7 @@ import { IDatabaseConfig, IDatabaseFunction, ISignalHandler } from '../types/typ
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import messages from '../utils/messages.js';
-import { createError } from '../middleware/errorHandler.js';
+import { DatabaseError } from '../errors/customErrors.js';
 
 dotenv.config();
 
@@ -12,17 +12,20 @@ const dbConfig: IDatabaseConfig = {
 
 const connectDB: IDatabaseFunction = async (config: IDatabaseConfig = dbConfig) => {
   try {
-    if (!process.env.DATABASE_URI) {
-      throw createError(messages.error.ENV_DATABASE_URI);
+    if (!config.uri) {
+      throw DatabaseError(messages.error.ENV_DATABASE_URI);
     }
 
     await mongoose.connect(config.uri);
     console.log(messages.success.DATABASE_CONNECTED);
   } catch (error) {
-    console.error(messages.error.DATABASE_CONNECTION_ERROR, error);
-    throw error;
+    if (error instanceof Error && error.name === 'DatabaseError') {
+      throw error;
+    }
+    throw DatabaseError(messages.error.DATABASE_CONNECTION_ERROR, error as Error);
   }
 };
+
 const disconnectDB: IDatabaseFunction = async () => {
   try {
     await mongoose.disconnect();

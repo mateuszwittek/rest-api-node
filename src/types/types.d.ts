@@ -38,26 +38,33 @@ export interface IAppError extends Error {
   name: string;
   status: string;
   statusCode: number;
+  isOperational: boolean; // Add this property
+  cause?: Error;
+  code?: string;
 }
 
 export interface ICreateError {
   (customMessage?: string, statusCode?: number): IAppError;
 }
 
-export type TErrors = Readonly<Record<string, (customMessage?: string) => Error>>;
-
-export interface IErrorHandler {
-  (error: Error, req: Request, res: Response, next?: NextFunction): void;
-}
-
 export interface IErrorResponse {
   status: string;
   statusCode: number;
   message: string;
-  timestamp: string;
-  path: string;
-  method: string;
+  stack?: string;
+  name?: string;
+  cause?: any;
 }
+
+// Define the IErrorHandler type
+export type IErrorHandler = (
+  error: Error & { isOperational?: boolean; statusCode?: number },
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => void;
+
+export type TErrors = Readonly<Record<string, (customMessage?: string) => Error>>;
 
 export interface IPerson {
   name: string;

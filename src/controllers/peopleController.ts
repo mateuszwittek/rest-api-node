@@ -8,7 +8,7 @@ const getAllPeople: IControllerFunction = async (req, res, next) => {
     const people = await getPeopleData();
     successHandler(res, messages.success.PEOPLE_RETRIEVED, people);
   } catch (error) {
-    next(error as Error);
+    next(error);
   }
 };
 
@@ -18,18 +18,17 @@ const getPerson: IControllerFunction = async (req, res, next) => {
     const person = await getPersonData(param);
     successHandler(res, messages.success.PERSON_RETRIEVED, person);
   } catch (error) {
-    next(error as Error);
+    next(error);
   }
 };
 
 const addPerson: IControllerFunction = async (req, res, next) => {
   try {
-    const { name, username, email } = req.body;
-    const newPerson = { name, username, email };
-    const createdPerson = await addPeopleData(newPerson);
-    successHandler(res, messages.success.PERSON_ADDED, createdPerson, 201);
+    const newPerson = await addPeopleData(req.body);
+    successHandler(res, messages.success.PERSON_ADDED, newPerson, 201);
   } catch (error) {
-    next(error as Error);
+    next(error);
   }
 };
+
 export { getAllPeople, getPerson, addPerson };

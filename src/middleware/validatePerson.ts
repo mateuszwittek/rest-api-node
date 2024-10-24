@@ -1,38 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import messages from '../utils/messages.js';
-import { createError } from './errorHandler.js';
-import { isDisposableEmail, isValidDomain } from '../utils/emailValidation.js';
+import { ValidationError } from '../errors/customErrors.js';
+import validateEmail from '../validation/emailValidation.js';
 
-const validateCallback = (req: Request, res: Response, next: NextFunction): void => {
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    const errorMessages = validationErrors.array().map(err => err.msg);
-    return next(createError(errorMessages.join(', '), 400));
+const validateRequest = (req: Request, res: Response, next: NextFunction): void => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map(err => err.msg);
+    const uniqueErrors = [...new Set(errorMessages)];
+    next(ValidationError(uniqueErrors.join('. ')));
+    return;
   }
 
   next();
 };
 
-const validEmail = async (value: string): Promise<boolean> => {
-  const domain = value.split('@')[1];
-  const [isValid, isDisposable] = await Promise.all([
-    isValidDomain(domain),
-    isDisposableEmail(value),
-  ]);
-
-  if (!isValid) {
-    throw createError(messages.error.EMAIL_DOMAIN_INVALID, 400);
-  }
-
-  if (isDisposable) {
-    throw createError(messages.error.EMAIL_DISPOSABLE, 400);
-  }
-
-  return true;
-};
-
-export const validatePerson = [
+const validatePerson = [
   body('name')
     .trim()
     .notEmpty()
@@ -57,8 +42,9 @@ export const validatePerson = [
     .withMessage(messages.error.EMAIL_REQUIRED)
     .isEmail()
     .withMessage(messages.error.EMAIL_INVALID)
-    .custom(validEmail)
+    .custom(validateEmail)
     .normalizeEmail(),
-  validateCallback,
+  validateRequest,
 ];
+
 export default validatePerson;

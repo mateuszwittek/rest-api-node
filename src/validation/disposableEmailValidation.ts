@@ -1,6 +1,3 @@
-import dns from 'dns';
-import { promisify } from 'util';
-
 const disposableDomains = [
   'tempmail.com',
   'throwawaymail.com',
@@ -25,15 +22,7 @@ const disposableDomains = [
   'example.com',
 ];
 
-const isDisposableEmail = async (email: string): Promise<boolean> =>
+const disposableEmailValidation = async (email: string): Promise<boolean> =>
   disposableDomains.includes(email.split('@')[1].toLowerCase());
 
-const isValidDomain = async (domain: string): Promise<boolean> => {
-  try {
-    return (await promisify(dns.resolveMx)(domain)).length > 0;
-  } catch {
-    return false;
-  }
-};
-
-export { isDisposableEmail, isValidDomain };
+export default disposableEmailValidation;

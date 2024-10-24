@@ -11,12 +11,11 @@ export const messages: TMessages = Object.freeze({
     DATABASE_DISCONNECTED: 'Database disconnected',
   },
   error: {
-    FAIL: 'Fail',
     ERROR: 'Error',
     BAD_REQUEST: 'Invalid request',
     UNAUTHORIZED: 'Authentication failed',
     FORBIDDEN: 'Access denied',
-    NOT_FOUND: 'Resource not found',
+    NOT_FOUND: 'Resource not found', // Ensure this is the message you want for 404 errors
     ENV_DATABASE_URI: 'DATABASE_URI environment variable is not defined',
     INTERNAL_SERVER: 'Internal server error',
     DATABASE_ERROR: 'Database operation failed',
@@ -51,6 +50,12 @@ export const messages: TMessages = Object.freeze({
     EMAIL_DOMAIN_INVALID: 'The email domain is invalid',
     REQUIRED_FIELDS: 'Required fields are missing',
     UNKNOWN_TYPE: 'Something went wrong',
+    NETWORK_ERROR: 'Network error',
+    DOMAIN_VALIDATION_ERROR: 'Failed to validate domain',
+    DOMAIN_NOT_FOUND: 'Domain does not exist',
+    DOMAIN_TIMEOUT: 'DNS lookup timed out',
+    DOMAIN_NETWORK_ERROR: 'Network error during DNS lookup',
+    DOMAIN_UNKNOWN: 'Unknown DNS error occurred',
   },
 });
 
