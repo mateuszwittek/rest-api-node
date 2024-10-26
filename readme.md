@@ -67,10 +67,12 @@ This API uses URL path versioning. The current version is v1. All endpoints shou
 ### /people
 
 - `GET api/v1/people`: Returns a list of all people from the database.
-- `GET api/v1/people/:param`: Retrieves a specific person by parameter, email, or username.
+- `GET api/v1/people/:param`: Retrieves a specific person by email or username.
 - `POST api/v1/people`: Adds a new person to the database.
+- `PUT api/v1/people/:param`: Updates an existing person by email or username.
+- `DELETE api/v1/people/:param`: Deletes a person by email or username.
 
-Request body for POST:
+Request body for POST/PUT:
 
 ```json
 {
@@ -92,31 +94,17 @@ You can find tests in the /test directory. To run them, use the following comman
 npm run test
 ```
 
-### Test Scenarios
+### Test Coverage
 
-The following scenarios are used to test the application:
+Tests cover:
 
-- API Endpoints
-  - GET /people: Should return an empty array when no people exist
-  - GET /people: Should return all people when they exist
-  - GET /people/:param: Should retrieve a specific person
-  - POST /people: Should create a new person
-    - Should return 400 for invalid data
+- API Endpoints (CRUD operations)
+- Data Validation
 - Error Handling
-
-  - Should handle operational errors with specific messages
-  - Should handle non-operational errors with generic message in production
-  - Should provide error details in development mode
-
-- Rate Limiter
-  - Should allow requests within the rate limit
-  - Should block requests exceeding the rate limit
-  - Should allow requests again after the window has passed
-- Security
-  - Should set appropriate security headers
-  - Should not include X-Powered-By header
-  - Should set appropriate CORS headers
-  - Should reject requests from non-allowed origins
+- Rate Limiting
+- Security Features
+- Database Operations
+- Input Sanitization
 
 ## License
 
