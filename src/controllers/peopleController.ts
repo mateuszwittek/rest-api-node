@@ -1,34 +1,35 @@
-import { IControllerFunction } from '../types/types';
-import { getPeopleData, getPersonData, addPeopleData } from '../services/peopleService.js';
+import { controllerWrapper } from '../utils/controllerWrapper.js';
+import {
+  getPeopleData,
+  getPersonData,
+  addPeopleData,
+  updatePersonData,
+  deletePersonData,
+} from '../services/peopleService.js';
 import messages from '../utils/messages.js';
-import { successHandler } from '../middleware/successHandler.js';
 
-const getAllPeople: IControllerFunction = async (req, res, next) => {
-  try {
-    const people = await getPeopleData();
-    successHandler(res, messages.success.PEOPLE_RETRIEVED, people);
-  } catch (error) {
-    next(error);
-  }
-};
+export const getAllPeople = controllerWrapper(
+  () => getPeopleData(),
+  messages.success.PEOPLE_RETRIEVED
+);
 
-const getPerson: IControllerFunction = async (req, res, next) => {
-  try {
-    const param = req.params.param;
-    const person = await getPersonData(param);
-    successHandler(res, messages.success.PERSON_RETRIEVED, person);
-  } catch (error) {
-    next(error);
-  }
-};
+export const getPerson = controllerWrapper(
+  req => getPersonData(req.params.param),
+  messages.success.PERSON_RETRIEVED
+);
 
-const addPerson: IControllerFunction = async (req, res, next) => {
-  try {
-    const newPerson = await addPeopleData(req.body);
-    successHandler(res, messages.success.PERSON_ADDED, newPerson, 201);
-  } catch (error) {
-    next(error);
-  }
-};
+export const addPerson = controllerWrapper(
+  req => addPeopleData(req.body),
+  messages.success.PERSON_ADDED,
+  201
+);
 
-export { getAllPeople, getPerson, addPerson };
+export const updatePerson = controllerWrapper(
+  req => updatePersonData(req.params.param, req.body),
+  messages.success.PERSON_UPDATED
+);
+
+export const deletePerson = controllerWrapper(
+  req => deletePersonData(req.params.param),
+  messages.success.PERSON_DELETED
+);

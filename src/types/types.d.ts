@@ -95,3 +95,11 @@ export interface IGetPersonData {
 export interface IAddPersonData {
   (person: IPerson): Promise<IPersonDocument>;
 }
+
+export interface IUpdatePersonData {
+  (param: string, updateData: Partial<IPerson>): Promise<IPerson>;
+}
+
+export interface IDeletePersonData {
+  (param: string): Promise<IPerson>;
+}

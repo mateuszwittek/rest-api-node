@@ -1,78 +1,99 @@
-import { IAddPersonData, IGetPeopleData, IGetPersonData } from '../types/types';
+import {
+  IPerson,
+  IAddPersonData,
+  IGetPeopleData,
+  IGetPersonData,
+  IUpdatePersonData,
+  IDeletePersonData,
+} from '../types/types';
 import Person from '../models/person.js';
 import messages from '../utils/messages.js';
 import {
   NotFoundError,
   BadRequestError,
-  DuplicateEntryError,
   DatabaseError,
+  DuplicateEntryError,
 } from '../errors/customErrors.js';
+
+// Reusable query for finding a person by email or username
+const personQuery = (param: string) => ({
+  $or: [{ email: param }, { username: param }],
+});
+
+const findPersonByParam = async (param: string) => {
+  if (!param) {
+    throw BadRequestError(messages.error.BAD_REQUEST);
+  }
+
+  const person = await Person.findOne(personQuery(param));
+  if (!person) {
+    throw NotFoundError('person');
+  }
+
+  return person;
+};
 
 const getPeopleData: IGetPeopleData = async () => {
   try {
-    return await Person.find({}, { _id: 0 });
+    // Use lean() for better performance when we don't need mongoose document methods
+    return await Person.find({}, { _id: 0 }).lean();
   } catch (error) {
     if (error instanceof Error && error.name === 'MongoError') {
       throw DatabaseError('Failed to fetch people', error);
     }
-    throw new Error(messages.error.UNKNOWN_TYPE, { cause: error as Error });
+    throw error;
   }
 };
 
 const getPersonData: IGetPersonData = async param => {
-  try {
-    if (!param) {
-      throw BadRequestError(messages.error.BAD_REQUEST);
-    }
-
-    const person = await Person.findOne({
-      $or: [{ email: param }, { username: param }],
-    });
-
-    if (!person) {
-      throw NotFoundError('person');
-    }
-
-    return person;
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      (error.name === 'NotFoundError' || error.name === 'BadRequestError')
-    ) {
-      throw error;
-    }
-    throw new Error(messages.error.UNKNOWN_TYPE, { cause: error as Error });
-  }
+  return await findPersonByParam(param);
 };
 
-const addPeopleData: IAddPersonData = async person => {
+const addPeopleData: IAddPersonData = async ({ name, username, email, ...rest }) => {
+  if (!name || !username || !email) {
+    throw BadRequestError(messages.error.REQUIRED_FIELDS);
+  }
+
   try {
-    const { name, username, email } = person;
-
-    if (!name || !username || !email) {
-      throw BadRequestError(messages.error.REQUIRED_FIELDS);
-    }
-
-    const existingPerson = await Person.findOne({
-      $or: [{ email }, { username }],
-    });
-
-    if (existingPerson) {
+    return await Person.create({ name, username, email, ...rest });
+  } catch (error) {
+    if (error instanceof Error && (error as any).code === 11000) {
       throw DuplicateEntryError('person');
     }
-
-    return await Person.create(person);
-  } catch (error) {
-    if (error instanceof Error) {
-      if (['BadRequestError', 'DuplicateEntryError'].includes(error.name)) {
-        throw error;
-      }
-      if ((error as any).code === 11000) {
-        throw DuplicateEntryError('person');
-      }
-    }
-    throw new Error(messages.error.UNKNOWN_TYPE, { cause: error as Error });
+    throw error;
   }
 };
 
-export { getPeopleData, getPersonData, addPeopleData };
+const updatePersonData: IUpdatePersonData = async (param, updateData) => {
+  if (Object.keys(updateData).length === 0) {
+    throw BadRequestError(messages.error.BAD_REQUEST);
+  }
+
+  const person = await Person.findOneAndUpdate(
+    personQuery(param),
+    { $set: updateData },
+    {
+      new: true,
+      runValidators: true,
+      lean: true,
+    }
+  );
+
+  if (!person) {
+    throw NotFoundError('person');
+  }
+
+  return person;
+};
+
+const deletePersonData: IDeletePersonData = async param => {
+  const person = await Person.findOneAndDelete(personQuery(param));
+
+  if (!person) {
+    throw NotFoundError('person');
+  }
+
+  return person;
+};
+
+export { getPeopleData, getPersonData, addPeopleData, updatePersonData, deletePersonData };

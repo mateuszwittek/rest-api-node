@@ -9,6 +9,8 @@ export const messages: TMessages = Object.freeze({
     PERSON_ADDED: 'New person added successfully',
     DATABASE_CONNECTED: 'Database connected',
     DATABASE_DISCONNECTED: 'Database disconnected',
+    PERSON_UPDATED: 'Person updated successfully',
+    PERSON_DELETED: 'Person deleted successfully',
   },
   error: {
     ERROR: 'Error',
