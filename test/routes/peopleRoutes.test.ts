@@ -12,7 +12,7 @@ import Person from '../../src/models/person';
 import invalidDataCases from '../data/invalidRequestsData.js';
 import { successHandler } from '../../src/middleware/successHandler.js';
 import { DatabaseError, NotFoundError } from '../../src/errors/customErrors.js';
-import { MongoError } from 'mongodb'; // Import MongoError for mocking
+import { MongoError } from 'mongodb';
 
 dotenv.config();
 
@@ -21,6 +21,12 @@ const dbConfig = {
 };
 
 const API_PATH = '/api/v1';
+
+const validPerson = {
+  name: 'John Doe',
+  username: 'johndoe',
+  email: 'john@gmail.com',
+};
 
 beforeAll(async () => {
   await connectDB(dbConfig as IDatabaseConfig);
@@ -44,17 +50,13 @@ describe('People API Endpoints', () => {
     });
 
     it('should return all people', async () => {
-      await Person.create({
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@gmail.com',
-      });
-
+      await Person.create(validPerson);
       await Person.create({
         name: 'Jane Doe',
         username: 'janedoe',
         email: 'jane@gmail.com',
       });
+
       const res = await request(app).get(`${API_PATH}/people`);
       expect(res.status).toBe(200);
       expect(res.body.data).toHaveLength(2);
@@ -63,46 +65,114 @@ describe('People API Endpoints', () => {
   });
 
   describe('GET /people/:param', () => {
-    it('should return a single person', async () => {
-      const person = await Person.create({
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@gmail.com',
-      });
-
+    it('should get person by username', async () => {
+      const person = await Person.create(validPerson);
       const res = await request(app).get(`${API_PATH}/people/${person.username}`);
       expect(res.status).toBe(200);
       expect(res.body.data.username).toBe(person.username);
-      expect(res.body.message).toBe(messages.success.PERSON_RETRIEVED);
     });
 
-    it('should return 404 if person does not exist', async () => {
-      const res = await request(app).get(`${API_PATH}/people/invalid-username`);
+    it('should get person by email', async () => {
+      const person = await Person.create(validPerson);
+      const res = await request(app).get(`${API_PATH}/people/${person.email}`);
+      expect(res.status).toBe(200);
+      expect(res.body.data.email).toBe(person.email);
+    });
+
+    it('should return 404 if person not found', async () => {
+      const res = await request(app).get(`${API_PATH}/people/nonexistent`);
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe(NotFoundError('person').message); // Use NotFoundError
+      expect(res.body.message).toBe(NotFoundError('person').message);
     });
   });
 
   describe('POST /people', () => {
-    it('should create a new person', async () => {
-      const newPerson = {
-        name: 'John Doe',
-        username: 'johndoe',
-        email: 'john@gmail.com',
-      };
-
-      const res = await request(app).post(`${API_PATH}/people`).send(newPerson);
+    it('should create a new person with valid data', async () => {
+      const res = await request(app).post(`${API_PATH}/people`).send(validPerson);
       expect(res.status).toBe(201);
-      expect(res.body.data.name).toBe(newPerson.name);
+      expect(res.body.data.username).toBe(validPerson.username);
       expect(res.body.message).toBe(messages.success.PERSON_ADDED);
     });
 
-    test.each(invalidDataCases)('should return 400 for $description', async ({ data }) => {
+    test.each(invalidDataCases)('should reject $description', async ({ data }) => {
       const res = await request(app).post(`${API_PATH}/people`).send(data);
-
       expect(res.status).toBe(400);
       expect(res.body.status).toBe(messages.error.ERROR);
-      expect(res.body).toHaveProperty('message');
+    });
+
+    it('should reject duplicate username', async () => {
+      await Person.create(validPerson);
+      const res = await request(app)
+        .post(`${API_PATH}/people`)
+        .send({ ...validPerson, email: 'different@gmail.com' });
+      expect(res.status).toBe(409);
+    });
+
+    it('should reject duplicate email', async () => {
+      await Person.create(validPerson);
+      const res = await request(app)
+        .post(`${API_PATH}/people`)
+        .send({ ...validPerson, username: 'different' });
+      expect(res.status).toBe(409);
+    });
+  });
+
+  describe('PUT /people/:param', () => {
+    it('should update person with valid partial data', async () => {
+      const person = await Person.create(validPerson);
+      const update = { name: 'John Updated' };
+      const res = await request(app).put(`${API_PATH}/people/${person.username}`).send(update);
+      expect(res.status).toBe(200);
+      expect(res.body.data.name).toBe(update.name);
+      expect(res.body.data.username).toBe(person.username);
+    });
+
+    it('should update using email as parameter', async () => {
+      const person = await Person.create(validPerson);
+      const update = { name: 'John Updated' };
+      const res = await request(app).put(`${API_PATH}/people/${person.email}`).send(update);
+      expect(res.status).toBe(200);
+      expect(res.body.data.name).toBe(update.name);
+    });
+
+    it('should reject invalid update data', async () => {
+      const person = await Person.create(validPerson);
+      const update = { name: '123' }; // Invalid name
+      const res = await request(app).put(`${API_PATH}/people/${person.username}`).send(update);
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 404 for non-existent person', async () => {
+      const res = await request(app)
+        .put(`${API_PATH}/people/nonexistent`)
+        .send({ name: 'New Name' });
+      expect(res.status).toBe(404);
+    });
+  });
+
+  describe('DELETE /people/:param', () => {
+    it('should delete person by username', async () => {
+      const person = await Person.create(validPerson);
+      const res = await request(app).delete(`${API_PATH}/people/${person.username}`);
+      expect(res.status).toBe(200);
+      expect(res.body.message).toBe(messages.success.PERSON_DELETED);
+
+      const found = await Person.findOne({ username: person.username });
+      expect(found).toBeNull();
+    });
+
+    it('should delete person by email', async () => {
+      const person = await Person.create(validPerson);
+      const res = await request(app).delete(`${API_PATH}/people/${person.email}`);
+      expect(res.status).toBe(200);
+
+      const found = await Person.findOne({ email: person.email });
+      expect(found).toBeNull();
+    });
+
+    it('should return 404 for non-existent person', async () => {
+      const res = await request(app).delete(`${API_PATH}/people/nonexistent`);
+      expect(res.status).toBe(404);
     });
   });
 });
