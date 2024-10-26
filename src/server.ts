@@ -3,16 +3,30 @@ import connectDB from './config/database.js';
 import app from './app.js';
 
 const { port } = config;
-const server = (): void => {
+
+const server = app.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
-};
+});
+
+process.on('uncaughtException', (error: Error) => {
+  console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.error('Error:', error.name, error.message);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (error: Error) => {
+  console.error('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.error('Error:', error);
+  server.close(() => {
+    process.exit(1);
+  });
+});
 
 const startServer = async (): Promise<void> => {
   try {
     await connectDB();
-    app.listen(port, server);
   } catch (error) {
-    console.error(error);
+    console.error('Database connection error:', error);
     throw error;
   }
 };
