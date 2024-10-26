@@ -1,3 +1,5 @@
+import { MongoError } from 'mongodb';
+import { MongooseError } from 'mongoose';
 import {
   IPerson,
   IAddPersonData,
@@ -35,10 +37,9 @@ const findPersonByParam = async (param: string) => {
 
 const getPeopleData: IGetPeopleData = async () => {
   try {
-    // Use lean() for better performance when we don't need mongoose document methods
     return await Person.find({}, { _id: 0 }).lean();
   } catch (error) {
-    if (error instanceof Error && error.name === 'MongoError') {
+    if (error instanceof MongoError || error instanceof MongooseError) {
       throw DatabaseError('Failed to fetch people', error);
     }
     throw error;

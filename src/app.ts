@@ -15,11 +15,15 @@ app.use(limiter);
 app.use(cors(corsConfig));
 app.use(express.json());
 
+// API routes
 app.use('/api', router);
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+
+// If no route matches, create 404 error
+app.all('*', (req: express.Request, res: express.Response, next: express.NextFunction) => {
   next(NotFoundError('route'));
 });
 
+// Error handling middleware must be last
 app.use(errorHandler);
 
 export default app;

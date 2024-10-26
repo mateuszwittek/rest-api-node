@@ -32,9 +32,9 @@ export const createError = (message: string, statusCode: number = 500) =>
 export const ValidationError = (message: string) =>
   createCustomError('ValidationError', 400, message);
 
-export const NotFoundError = (resource: string) =>
+export const NotFoundError = (resource: string, cause?: Error) =>
   createCustomError('NotFoundError', 404, `${messages.error.NOT_FOUND}: ${resource}`, {
-    cause: new Error(`${messages.error.NOT_FOUND}: ${resource}`),
+    cause: cause || new Error(`${messages.error.NOT_FOUND}: ${resource}`),
   });
 
 export const DatabaseError = (operation: string, cause?: Error) =>

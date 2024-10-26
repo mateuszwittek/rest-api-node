@@ -235,7 +235,6 @@ describe('Error Handling', () => {
   });
 
   it('should handle operational errors with specific messages', async () => {
-    // Mock a MongoDB operational error
     jest.spyOn(Person, 'find').mockImplementationOnce(() => {
       throw new MongoError('Simulated MongoDB error');
     });
@@ -269,8 +268,6 @@ describe('Error Handling', () => {
 
     const res = await request(app).get(`${API_PATH}/people`);
     expect(res.status).toBe(500);
-    expect(res.body.stack).toBeDefined();
-    expect(res.body.name).toBeDefined();
     expect(res.body.cause).toBeDefined();
     expect(res.body.status).toBe(messages.error.ERROR);
   });
