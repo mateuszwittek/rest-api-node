@@ -6,7 +6,7 @@
     "start": "node dist/server.js",
     "dev": "nodemon",
     "build": "tsc",
-    "test": "jest --detectOpenHandles"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest --config jest.config.json --detectOpenHandles --maxWorkers=6"
   },
   "keywords": [],
   "author": "",

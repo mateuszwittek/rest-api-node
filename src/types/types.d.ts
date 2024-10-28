@@ -72,7 +72,7 @@ export interface IPerson {
   email: string;
 }
 
-export interface IInvalidDataCase {
+export interface IInvalidRequestCase {
   description: string;
   data: Partial<IPerson>;
 }

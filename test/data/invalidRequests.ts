@@ -1,6 +1,6 @@
-import { IInvalidDataCase } from '../../src/types/types';
+import { IInvalidRequestCase } from '../../src/types/types';
 
-const invalidDataCases: IInvalidDataCase[] = [
+const invalidRequestsData: IInvalidRequestCase[] = [
   {
     description: 'empty name',
     data: { name: '', username: 'emptyname', email: 'empty.name@gmail.com' },
@@ -51,4 +51,4 @@ const invalidDataCases: IInvalidDataCase[] = [
   },
 ];
 
-export default invalidDataCases;
+export default invalidRequestsData;
