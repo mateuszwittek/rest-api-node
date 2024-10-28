@@ -4,14 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-export const API_PATH = '/api/v1';
-
-export const validPerson = {
-  name: 'John Doe',
-  username: 'johndoe',
-  email: 'john@gmail.com',
-};
-
 const dbUri = process.env.TEST_DATABASE_URI || '';
 const isSystemCollection = (name: string): boolean => name.startsWith('system.');
 
