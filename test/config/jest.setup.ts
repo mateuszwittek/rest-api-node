@@ -1,10 +1,19 @@
 import mongoose from 'mongoose';
+import { Collection } from 'mongodb';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
+export const API_PATH = '/api/v1';
+
+export const validPerson = {
+  name: 'John Doe',
+  username: 'johndoe',
+  email: 'john@gmail.com',
+};
+
 const dbUri = process.env.TEST_DATABASE_URI || '';
-const isSystemCollection = name => name.startsWith('system.');
+const isSystemCollection = (name: string): boolean => name.startsWith('system.');
 
 // Add any test-specific setup here
 beforeAll(async () => {
@@ -12,11 +21,11 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await mongoose.connection.close();
+  await mongoose.disconnect();
 });
 
 beforeEach(async () => {
-  const collections = await mongoose.connection.db.collections();
+  const collections: Collection[] = (await mongoose.connection.db?.collections()) ?? [];
   for (let collection of collections) {
     !isSystemCollection(collection.collectionName) && (await collection.deleteMany({}));
   }

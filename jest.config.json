@@ -14,5 +14,5 @@
     ]
   },
   "testMatch": ["**/test/**/*.test.ts"],
-  "setupFilesAfterEnv": ["<rootDir>/test/config/jest.setup.js"]
+  "setupFilesAfterEnv": ["<rootDir>/test/config/jest.setup.ts"]
 }
