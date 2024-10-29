@@ -7,8 +7,8 @@
     "dev": "nodemon",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "build": "tsc",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules && jest --config jest.config.json --detectOpenHandles --maxWorkers=6"
+    "build": "tsc -p tsconfig.json",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p tsconfig.test.json && jest --config jest.config.json --detectOpenHandles --maxWorkers=6"
   },
   "keywords": [],
   "author": "",
