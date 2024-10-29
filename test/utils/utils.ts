@@ -1,5 +1,6 @@
 import { API_PATH, validPerson } from '../data/constants.js';
 import { IPersonDocument } from '../../src/types/types.js';
+import { RequestData, RequestFunctions } from '../types/types.js';
 import Person from '../../src/models/person.js';
 import { Application } from 'express';
 import request from 'supertest';
@@ -11,16 +12,6 @@ export const cleanupDatabase = async (): Promise<void> => {
 export const createPerson = async (data = validPerson): Promise<IPersonDocument> => {
   return await Person.create(data);
 };
-
-type RequestData = Record<string, unknown>;
-
-interface RequestFunctions {
-  get: (path: string) => request.Test;
-  post: (path: string, data?: RequestData) => request.Test;
-  put: (path: string, data?: RequestData) => request.Test;
-  delete: (path: string) => request.Test;
-  options: (path: string) => request.Test;
-}
 
 export const makeRequest = (app: Application): RequestFunctions => {
   return {
