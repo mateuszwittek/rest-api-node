@@ -11,7 +11,8 @@
     "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p test/tsconfig.json && jest --config jest.config.json --detectOpenHandles",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "validate": "npm run lint & npm run test"
   },
   "keywords": [],
   "author": "",
