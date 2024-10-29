@@ -8,7 +8,9 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc -p tsconfig.json",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p test/tsconfig.json && jest --config jest.config.json --detectOpenHandles --maxWorkers=6",
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p test/tsconfig.json && jest --config jest.config.json --detectOpenHandles",
+    "test:watch": "npm test -- --watch",
+    "test:coverage": "npm test -- --coverage",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\""
   },
   "keywords": [],
