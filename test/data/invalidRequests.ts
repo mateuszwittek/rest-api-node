@@ -1,5 +1,3 @@
-import { IInvalidRequestCase } from '../../src/types/types';
-
 const invalidRequestsData: IInvalidRequestCase[] = [
   {
     description: 'empty name',

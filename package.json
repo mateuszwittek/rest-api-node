@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "tsc -p tsconfig.json",
-    "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p tsconfig.test.json && jest --config jest.config.json --detectOpenHandles --maxWorkers=6"
+    "test": "set NODE_OPTIONS=--experimental-vm-modules && tsc -p test/tsconfig.json && jest --config jest.config.json --detectOpenHandles --maxWorkers=6"
   },
   "keywords": [],
   "author": "",
@@ -39,7 +39,7 @@
     "nodemon": "^3.1.7",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.6.2",
     "typescript-eslint": "^8.12.2"
   }

@@ -1,6 +1,4 @@
 import messages from '../utils/messages.js';
-import { IAppError } from '../types/types';
-
 interface ErrorOptions {
   cause?: Error;
   isOperational?: boolean;

@@ -1,5 +1,3 @@
-import { TMessages } from '../types/types';
-
 export const messages: TMessages = Object.freeze({
   success: {
     SUCCESS: 'Success',

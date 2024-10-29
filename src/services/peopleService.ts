@@ -1,14 +1,5 @@
 import { MongoError } from 'mongodb';
 import { FilterQuery, MongooseError } from 'mongoose';
-import {
-  IAddPersonData,
-  IGetPeopleData,
-  IGetPersonData,
-  IUpdatePersonData,
-  IDeletePersonData,
-  IPerson,
-  IPersonDocument,
-} from '../types/types';
 import Person from '../models/person.js';
 import messages from '../utils/messages.js';
 import {

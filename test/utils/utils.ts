@@ -1,7 +1,6 @@
-import { API_PATH, validPerson } from '../data/constants.js';
-import { IPersonDocument } from '../../src/types/types.js';
-import { RequestData, RequestFunctions } from '../types/types.js';
-import Person from '../../src/models/person.js';
+import { API_PATH, validPerson } from '../data/constants';
+import { RequestData, RequestFunctions } from '../types/types';
+import Person from '../../src/models/person';
 import { Application } from 'express';
 import request from 'supertest';
 

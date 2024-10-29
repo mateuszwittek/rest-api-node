@@ -2,9 +2,8 @@ import express from 'express';
 import request from 'supertest';
 import rateLimit from 'express-rate-limit';
 import rateLimiter from '../../../src/middleware/rateLimiter';
-import messages from '../../../src/utils/messages.js';
-import { IControllerFunction } from '../../../src/types/types.js';
-import { successHandler } from '../../../src/middleware/successHandler.js';
+import messages from '../../../src/utils/messages';
+import { successHandler } from '../../../src/middleware/successHandler';
 
 describe('Rate Limiter Middleware', () => {
   let app: express.Express;

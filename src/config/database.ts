@@ -1,4 +1,3 @@
-import { IDatabaseConfig, IDatabaseFunction, ISignalHandler } from '../types/types';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import messages from '../utils/messages.js';

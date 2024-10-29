@@ -1,5 +1,3 @@
-import request from 'supertest';
-
 export type RequestData = Record<string, unknown>;
 
 export interface RequestFunctions {

@@ -1,4 +1,3 @@
-import { IPersonDocument } from '../types/types';
 import mongoose from 'mongoose';
 
 const PersonSchema = new mongoose.Schema<IPersonDocument>({

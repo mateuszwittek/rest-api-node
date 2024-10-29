@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express';
-import { IControllerFunction } from '../types/types';
 import { successHandler } from '../middleware/successHandler.js';
 
 export const controllerWrapper =
