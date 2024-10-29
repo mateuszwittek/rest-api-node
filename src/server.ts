@@ -4,9 +4,7 @@ import app from './app.js';
 
 const { port } = config;
 
-const server = app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
+const server = app.listen(port);
 
 process.on('uncaughtException', (error: Error) => {
   console.error('UNCAUGHT EXCEPTION! 💥 Shutting down...');

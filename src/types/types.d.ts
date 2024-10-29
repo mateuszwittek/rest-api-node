@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from 'express';
-import { ConnectOptions, Document, Model } from 'mongoose';
+import { ConnectOptions, Document } from 'mongoose';
 
 export interface IConfig {
   port: number;
@@ -53,7 +53,7 @@ export interface IErrorResponse {
   message: string;
   stack?: string;
   name?: string;
-  cause?: any;
+  cause?: unknown;
 }
 
 // Define the IErrorHandler type
@@ -78,7 +78,6 @@ export interface IInvalidRequestCase {
 }
 
 export interface IPersonDocument extends IPerson, Document {}
-export interface IPersonModel extends Model<IPersonDocument> {}
 
 export interface IControllerFunction {
   (req: Request, res: Response, next: NextFunction): void;

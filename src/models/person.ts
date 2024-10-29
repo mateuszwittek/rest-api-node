@@ -1,4 +1,4 @@
-import { IPersonDocument, IPersonModel } from '../types/types';
+import { IPersonDocument } from '../types/types';
 import mongoose from 'mongoose';
 
 const PersonSchema = new mongoose.Schema<IPersonDocument>({
@@ -18,6 +18,6 @@ const PersonSchema = new mongoose.Schema<IPersonDocument>({
   },
 });
 
-const Person = mongoose.model<IPersonDocument, IPersonModel>('Person', PersonSchema);
+const Person = mongoose.model<IPersonDocument>('Person', PersonSchema);
 
 export default Person;

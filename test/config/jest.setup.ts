@@ -18,7 +18,9 @@ afterAll(async () => {
 
 beforeEach(async () => {
   const collections: Collection[] = (await mongoose.connection.db?.collections()) ?? [];
-  for (let collection of collections) {
-    !isSystemCollection(collection.collectionName) && (await collection.deleteMany({}));
+  for (const collection of collections) {
+    if (!isSystemCollection(collection.collectionName)) {
+      await collection.deleteMany({});
+    }
   }
 });

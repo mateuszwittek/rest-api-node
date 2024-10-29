@@ -4,7 +4,7 @@ import { successHandler } from '../middleware/successHandler.js';
 
 export const controllerWrapper =
   (
-    operation: (req: Request) => Promise<any>,
+    operation: (req: Request) => Promise<object>,
     successMessage: string,
     statusCode: number = 200
   ): IControllerFunction =>

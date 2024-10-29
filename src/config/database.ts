@@ -17,7 +17,6 @@ const connectDB: IDatabaseFunction = async (config: IDatabaseConfig = dbConfig) 
     }
 
     await mongoose.connect(config.uri);
-    console.log(messages.success.DATABASE_CONNECTED);
   } catch (error) {
     if (error instanceof Error && error.name === 'DatabaseError') {
       throw error;

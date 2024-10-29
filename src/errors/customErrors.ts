@@ -26,40 +26,40 @@ const createCustomError = (
   return error;
 };
 
-export const createError = (message: string, statusCode: number = 500) =>
+export const createError = (message: string, statusCode: number = 500): IAppError =>
   createCustomError('CustomError', statusCode, message);
 
-export const ValidationError = (message: string) =>
+export const ValidationError = (message: string): IAppError =>
   createCustomError('ValidationError', 400, message);
 
-export const NotFoundError = (resource: string, cause?: Error) =>
+export const NotFoundError = (resource: string, cause?: Error): IAppError =>
   createCustomError('NotFoundError', 404, `${messages.error.NOT_FOUND}: ${resource}`, {
     cause: cause || new Error(`${messages.error.NOT_FOUND}: ${resource}`),
   });
 
-export const DatabaseError = (operation: string, cause?: Error) =>
+export const DatabaseError = (operation: string, cause?: Error): IAppError =>
   createCustomError('DatabaseError', 500, `${messages.error.DATABASE_ERROR}: ${operation}`, {
     cause: cause || new Error(`${messages.error.DATABASE_ERROR}: ${operation}`),
   });
 
-export const DuplicateEntryError = (field: string, cause?: Error) =>
+export const DuplicateEntryError = (field: string, cause?: Error): IAppError =>
   createCustomError('DuplicateEntryError', 409, `${messages.error.DATABASE_DUPLICATE}: ${field}`, {
     cause: cause || new Error(`${messages.error.DATABASE_DUPLICATE}: ${field}`),
   });
 
-export const EmailValidationError = (message: string) =>
+export const EmailValidationError = (message: string): IAppError =>
   createCustomError('EmailValidationError', 400, message);
 
-export const BadRequestError = (message: string) =>
+export const BadRequestError = (message: string): IAppError =>
   createCustomError('BadRequestError', 400, message);
 
-export const NetworkError = (message?: string, cause?: Error) =>
+export const NetworkError = (message?: string, cause?: Error): IAppError =>
   createCustomError('NetworkError', 503, message || messages.error.NETWORK_ERROR, { cause });
 
-export const DNSLookupError = (message?: string, cause?: Error) =>
+export const DNSLookupError = (message?: string, cause?: Error): IAppError =>
   createCustomError('DNSLookupError', 504, message || messages.error.DNS_LOOKUP_ERROR, { cause });
 
-export const DomainValidationError = (message?: string, cause?: Error) =>
+export const DomainValidationError = (message?: string, cause?: Error): IAppError =>
   createCustomError(
     'DomainValidationError',
     400,
@@ -67,7 +67,7 @@ export const DomainValidationError = (message?: string, cause?: Error) =>
     { cause }
   );
 
-export const InternalServerError = (cause?: Error) =>
+export const InternalServerError = (cause?: Error): IAppError =>
   createCustomError('InternalServerError', 500, messages.error.INTERNAL_SERVER, {
     cause,
     isOperational: false,

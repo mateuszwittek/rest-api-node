@@ -1,11 +1,11 @@
-import { IErrorHandler, IErrorResponse, IAppError } from '../types/types';
+import { IErrorHandler, IErrorResponse } from '../types/types';
 import messages from '../utils/messages.js';
 import { sanitize } from './../utils/sanitize.js';
 
-const errorHandler: IErrorHandler = (error, req, res, next) => {
-  let status = 'Error';
-  let statusCode = error.statusCode || 500;
-  let message = error.isOperational ? error.message : messages.error.INTERNAL_SERVER;
+const errorHandler: IErrorHandler = (error, req, res, _next) => {
+  const status = 'Error';
+  const statusCode = error.statusCode || 500;
+  const message = error.isOperational ? error.message : messages.error.INTERNAL_SERVER;
 
   if (process.env.NODE_ENV === 'development') {
     error.cause = {

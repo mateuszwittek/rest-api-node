@@ -2,7 +2,7 @@ import messages from '../utils/messages.js';
 import isValidDomain from './domainValidation.js';
 import isDisposableEmail from './disposableEmailValidation.js';
 
-const emailValidation = async (value: string) => {
+const emailValidation = async (value: string): Promise<boolean> => {
   if (!value) {
     throw new Error(messages.error.EMAIL_REQUIRED);
   }

@@ -1,21 +1,32 @@
 import { API_PATH, validPerson } from '../data/constants.js';
+import { IPersonDocument } from '../../src/types/types.js';
 import Person from '../../src/models/person.js';
 import { Application } from 'express';
 import request from 'supertest';
 
-export const cleanupDatabase = async () => {
+export const cleanupDatabase = async (): Promise<void> => {
   await Person.deleteMany({});
 };
 
-export const createPerson = async (data = validPerson) => {
+export const createPerson = async (data = validPerson): Promise<IPersonDocument> => {
   return await Person.create(data);
 };
 
-export const makeRequest = (app: Application) => {
+type RequestData = Record<string, unknown>;
+
+interface RequestFunctions {
+  get: (path: string) => request.Test;
+  post: (path: string, data?: RequestData) => request.Test;
+  put: (path: string, data?: RequestData) => request.Test;
+  delete: (path: string) => request.Test;
+  options: (path: string) => request.Test;
+}
+
+export const makeRequest = (app: Application): RequestFunctions => {
   return {
     get: (path: string) => request(app).get(`${API_PATH}${path}`),
-    post: (path: string, data?: any) => request(app).post(`${API_PATH}${path}`).send(data),
-    put: (path: string, data?: any) => request(app).put(`${API_PATH}${path}`).send(data),
+    post: (path: string, data?: RequestData) => request(app).post(`${API_PATH}${path}`).send(data),
+    put: (path: string, data?: RequestData) => request(app).put(`${API_PATH}${path}`).send(data),
     delete: (path: string) => request(app).delete(`${API_PATH}${path}`),
     options: (path: string) => request(app).options(`${API_PATH}${path}`),
   };

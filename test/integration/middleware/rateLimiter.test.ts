@@ -9,11 +9,7 @@ import { successHandler } from '../../../src/middleware/successHandler.js';
 describe('Rate Limiter Middleware', () => {
   let app: express.Express;
   const router: express.Router = express.Router();
-  const getData: IControllerFunction = async (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction
-  ) => {
+  const getData: IControllerFunction = async (req: express.Request, res: express.Response) => {
     successHandler(res, messages.success.SUCCESS, {}, 200);
   };
 
