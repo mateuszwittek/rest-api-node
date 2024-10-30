@@ -5,6 +5,8 @@ declare global {
   interface IConfig {
     port: number;
     env: string;
+    rateLimitWindowMs: number;
+    rateLimitMax: number;
     rootPath: string;
   }
 
