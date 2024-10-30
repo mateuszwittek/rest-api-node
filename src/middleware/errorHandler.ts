@@ -1,5 +1,4 @@
 import messages from '../utils/messages.js';
-import { sanitize } from './../utils/sanitize.js';
 
 const errorHandler: IErrorHandler = (error, req, res, _next) => {
   const status = 'Error';
@@ -23,7 +22,7 @@ const errorHandler: IErrorHandler = (error, req, res, _next) => {
     }),
   };
 
-  res.status(responseObj.statusCode).json(sanitize(responseObj));
+  res.status(responseObj.statusCode).json(responseObj);
 };
 
 export default errorHandler;

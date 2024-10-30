@@ -39,7 +39,7 @@ declare global {
     name: string;
     status: string;
     statusCode: number;
-    isOperational: boolean; // Add this property
+    isOperational: boolean;
     cause?: Error;
     code?: string;
   }
@@ -102,6 +102,23 @@ declare global {
   interface IDeletePersonData {
     (param: string): Promise<IPerson>;
   }
+
+  // Utility type to deeply sanitize nested objects, maps, sets, and arrays
+  type Sanitized<T> = T extends Date
+    ? Date
+    : T extends RegExp
+      ? RegExp
+      : T extends Error
+        ? Error
+        : T extends Map<infer K, infer V>
+          ? Map<Sanitized<K>, Sanitized<V>>
+          : T extends Set<infer U>
+            ? Set<Sanitized<U>>
+            : T extends Array<infer U>
+              ? Sanitized<U>[]
+              : T extends object
+                ? { [K in keyof T]: Sanitized<T[K]> }
+                : T;
 }
 
 export {};

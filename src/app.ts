@@ -7,6 +7,7 @@ import router from './routes/v1/index.js';
 import errorHandler from './middleware/errorHandler.js';
 import { NotFoundError } from './errors/customErrors.js';
 import limiter from './middleware/rateLimiter.js';
+import { responseSanitizer } from './utils/responseSanitizer.js';
 
 const app: express.Application = express();
 
@@ -23,7 +24,7 @@ app.all('*', (req: express.Request, res: express.Response, next: express.NextFun
   next(NotFoundError('route'));
 });
 
-// Error handling middleware must be last
+app.use(responseSanitizer);
 app.use(errorHandler);
 
 export default app;
