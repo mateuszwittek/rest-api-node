@@ -2,7 +2,8 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 
-dotenv.config();
+const loadEnv = (envPath?: string): dotenv.DotenvConfigOutput =>
+  envPath ? dotenv.config({ path: envPath }) : dotenv.config();
 
 const config: IConfig = {
   port: Number(process.env.PORT) || 3001,
@@ -10,4 +11,5 @@ const config: IConfig = {
   rootPath: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../'),
 };
 
+export { loadEnv };
 export default config;

@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 import { Collection } from 'mongodb';
-import dotenv from 'dotenv';
+import path from 'path';
+import { loadEnv } from '../../src/config/config';
+import config from '../../src/config/config';
 
-dotenv.config();
+loadEnv(path.resolve(config.rootPath, '.env.test'));
 
-const dbUri = process.env.TEST_DATABASE_URI || '';
 const isSystemCollection = (name: string): boolean => name.startsWith('system.');
 
-// Add any test-specific setup here
 beforeAll(async () => {
-  await mongoose.connect(dbUri);
+  await mongoose.connect(process.env.DATABASE_URI || '');
 });
 
 afterAll(async () => {

@@ -7,10 +7,10 @@ describe('CORS Configuration', () => {
   it('should set appropriate CORS headers', async () => {
     const res = await api
       .options('/people')
-      .set('Origin', 'http://localhost:3001')
+      .set('Origin', process.env.ALLOWED_ORIGINS)
       .set('Access-Control-Request-Method', 'GET');
 
-    expect(res.headers['access-control-allow-origin']).toBe('http://localhost:3001');
+    expect(res.headers['access-control-allow-origin']).toBe(process.env.ALLOWED_ORIGINS);
     expect(res.headers['access-control-allow-methods']).toBe('GET,POST,PUT,DELETE,OPTIONS');
     expect(res.headers['access-control-allow-credentials']).toBe('true');
   });

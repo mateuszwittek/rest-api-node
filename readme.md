@@ -17,25 +17,22 @@ If you haven't installed MongoDB yet, please follow the official MongoDB install
 
 To get started, follow these steps:
 
+1. Clone the repository:
+
 ```bash
 git clone https://github.com/mateuszwittek/rest-api-node.git
+```
+
+2. Install dependencies:
+
+```bash
 npm install
 ```
 
-Set up your MongoDB database:
-
-- Start your MongoDB server
-- Create a new database for this project
-
-Create a .env file in the root directory and add the following variables:
-
-```text
-PORT=YOUR_PORT
-NODE_ENV=YOUR_ENVIRONMENT_TYPE
-DATABASE_URI=YOUR_MONGODB_URI
-TEST_DATABASE_URI=YOUR_TEST_MONGODB_URI_FOR_JEST
-ALLOWED_ORIGINS=YOUR_ALLOWED_ORIGINS
-```
+3. Set up environment files:
+   - Copy `.env.example` to `.env` for development
+   - Copy `.env.test.example` to `.env.test` for testing
+   - Modify the values according to your needs
 
 ## Running the Application
 
