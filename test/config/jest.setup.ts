@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
 import { Collection } from 'mongodb';
-import path from 'path';
-import { loadEnv } from '../../src/config/config';
 import config from '../../src/config/config';
-
-loadEnv(path.resolve(config.rootPath, '.env.test'));
 
 const isSystemCollection = (name: string): boolean => name.startsWith('system.');
 
 beforeAll(async () => {
-  await mongoose.connect(process.env.DATABASE_URI || '');
+  await mongoose.connect(config.database.uri);
 });
 
 afterAll(async () => {

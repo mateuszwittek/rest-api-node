@@ -1,21 +1,16 @@
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import config from './config.js';
 import messages from '../utils/messages.js';
 import { DatabaseError } from '../errors/customErrors.js';
 
-dotenv.config();
+const { database } = config;
 
-const dbConfig: IDatabaseConfig = {
-  uri: process.env.DATABASE_URI || '',
-};
-
-const connectDB: IDatabaseFunction = async (config: IDatabaseConfig = dbConfig) => {
+const connectDB: IDatabaseFunction = async (dbConfig: IDatabaseConfig = database) => {
   try {
-    if (!config.uri) {
+    if (!dbConfig) {
       throw DatabaseError(messages.error.ENV_DATABASE_URI);
     }
-
-    await mongoose.connect(config.uri);
+    await mongoose.connect(dbConfig.uri);
   } catch (error) {
     if (error instanceof Error && error.name === 'DatabaseError') {
       throw error;

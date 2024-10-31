@@ -30,7 +30,8 @@ npm install
 ```
 
 3. Set up environment files:
-   - Copy `.env.example` to `.env` for development
+   - Copy `.env.example` to `.env` for production
+   - Copy `.env.dev.example` to `.env.dev` for development
    - Copy `.env.test.example` to `.env.test` for testing
    - Modify the values according to your needs
 
@@ -75,7 +76,7 @@ Request body for POST/PUT:
 {
   "name": "John Doe",
   "username": "johndoe",
-  "email": "john@example.com"
+  "email": "john@gmail.com"
 }
 ```
 
