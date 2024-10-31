@@ -1,60 +1,69 @@
 import express from 'express';
 import request from 'supertest';
-import rateLimit from 'express-rate-limit';
-import rateLimiter from '../../../src/middleware/rateLimiter';
+import rateLimiter, { limiterStore } from '../../../src/middleware/rateLimiter';
 import messages from '../../../src/utils/messages';
 import { successHandler } from '../../../src/middleware/successHandler';
+import config from '../../../src/config/config';
 
 describe('Rate Limiter Middleware', () => {
   let app: express.Express;
-  const router: express.Router = express.Router();
-  const getData: IControllerFunction = async (req: express.Request, res: express.Response) => {
-    successHandler(res, messages.success.SUCCESS, {}, 200);
-  };
+  const originalEnv = config.env;
+  const originalTrustProxy = express().get('trust proxy');
+
+  beforeAll(() => {
+    config.env = 'development';
+  });
+
+  afterAll(() => {
+    config.env = originalEnv;
+  });
 
   beforeEach(() => {
+    limiterStore.resetAll();
     app = express();
-    const testLimiter = rateLimit({
-      ...rateLimiter,
-      windowMs: 1000, // 1 second for testing
-      max: 5,
-    });
 
-    app.use(testLimiter);
-    router.get('/test', getData);
-    app.use(router);
+    const testRouter = express.Router();
+    testRouter.use(rateLimiter);
+    testRouter.get('/rate-test', (req, res) => {
+      successHandler(res, messages.success.SUCCESS, {}, 200);
+    });
+    app.use('/test', testRouter);
+  });
+
+  afterEach(() => {
+    app.set('trust proxy', originalTrustProxy);
   });
 
   describe('Request Limits', () => {
+    it('should include correct rate limit headers', async () => {
+      const res = await request(app).get('/test/rate-test');
+
+      expect(res.headers['ratelimit-limit']).toBe('5');
+      expect(res.headers['ratelimit-remaining']).toBe('4');
+      expect(res.headers['ratelimit-reset']).toBeDefined();
+    });
+
     it('should allow requests within the rate limit', async () => {
-      for (let i = 0; i < 5; i++) {
-        const res = await request(app).get('/test');
+      for (let i = 0; i < config.rateLimitMax; i++) {
+        const res = await request(app).get('/test/rate-test');
         expect(res.status).toBe(200);
       }
     });
 
     it('should block requests exceeding the rate limit', async () => {
-      // Make 5 requests to hit the limit
-      for (let i = 0; i < 5; i++) {
-        await request(app).get('/test');
+      for (let i = 0; i < config.rateLimitMax; i++) {
+        await request(app).get('/test/rate-test');
       }
-
-      // This request should be blocked
-      const res = await request(app).get('/test');
+      const res = await request(app).get('/test/rate-test');
       expect(res.status).toBe(429);
     });
 
     it('should allow requests again after the window has passed', async () => {
-      // Hit the rate limit
-      for (let i = 0; i < 5; i++) {
-        await request(app).get('/test');
+      for (let i = 0; i < config.rateLimitMax; i++) {
+        await request(app).get('/test/rate-test');
       }
-
-      // Wait for the window to reset
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Should work again
-      const res = await request(app).get('/test');
+      const res = await request(app).get('/test/rate-test');
       expect(res.status).toBe(200);
     });
   });
