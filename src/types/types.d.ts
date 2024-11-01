@@ -35,7 +35,7 @@ declare global {
   }
 
   interface ISuccessHandler {
-    (res: Response, message: string, data: object, statusCode?: number): void;
+    (res: Response, message: string, data?: object, statusCode?: number): void;
   }
 
   interface IAppError extends Error {
