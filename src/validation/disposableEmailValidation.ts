@@ -1,4 +1,4 @@
-const disposableDomains = [
+const disposableDomains = Object.freeze([
   'tempmail.com',
   'throwawaymail.com',
   '10minutemail.com',
@@ -20,7 +20,7 @@ const disposableDomains = [
   'crazymailing.com',
   'emailondeck.com',
   'example.com',
-];
+]);
 
 const disposableEmailValidation = async (email: string): Promise<boolean> =>
   disposableDomains.includes(email.split('@')[1].toLowerCase());

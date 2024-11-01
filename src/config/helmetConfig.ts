@@ -24,6 +24,6 @@ const helmetConfig: HelmetOptions = {
   frameguard: {
     action: 'deny',
   },
-};
+} as const;
 
 export default helmetConfig;

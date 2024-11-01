@@ -1,26 +1,16 @@
 import dns from 'dns';
-import { promisify } from 'util';
+import dnsConfig from '../config/dns.config.js';
 import messages from './messages.js';
 import { DNSLookupError, NetworkError } from '../errors/customErrors.js';
-
-export const resolveMx = promisify(dns.resolveMx);
-export const DNS_TIMEOUT_MS = 5000;
-
-export enum DNS_ERROR_TYPES {
-  DOMAIN_NOT_FOUND = 'DOMAIN_NOT_FOUND',
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  TIMEOUT = 'TIMEOUT',
-  UNKNOWN = 'UNKNOWN',
-}
 
 export const performDnsLookup = async (domain: string): Promise<dns.MxRecord[]> => {
   try {
     return await Promise.race([
-      resolveMx(domain),
+      dnsConfig.resolveMx(domain),
       new Promise<dns.MxRecord[]>((_, reject) => {
         const timeoutError = DNSLookupError(messages.error.DOMAIN_TIMEOUT);
         timeoutError.name = DNS_ERROR_TYPES.TIMEOUT;
-        setTimeout(() => reject(timeoutError), DNS_TIMEOUT_MS);
+        setTimeout(() => reject(timeoutError), dnsConfig.timeoutMs);
       }),
     ]);
   } catch (error) {

@@ -8,6 +8,6 @@ const corsConfig = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
   maxAge: 86400,
-};
+} as const;
 
 export default corsConfig;

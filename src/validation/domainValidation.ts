@@ -1,4 +1,4 @@
-import { performDnsLookup, DNS_ERROR_TYPES } from '../utils/dnsUtils.js';
+import { performDnsLookup } from '../utils/dnsUtils.js';
 import messages from '../utils/messages.js';
 import { DomainValidationError, NetworkError } from '../errors/customErrors.js';
 
