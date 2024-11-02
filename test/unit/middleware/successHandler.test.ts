@@ -21,7 +21,7 @@ describe('Success Handler', () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(statusCode);
     expect(mockRes.json).toHaveBeenCalledWith({
-      status: message,
+      status: messages.success.SUCCESS,
       statusCode,
       message,
       data,
@@ -33,7 +33,7 @@ describe('Success Handler', () => {
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
     expect(mockRes.json).toHaveBeenCalledWith({
-      status: message,
+      status: messages.success.SUCCESS,
       statusCode: 200,
       message,
       data: {},
