@@ -1,25 +1,15 @@
-import { performDnsLookup } from '../utils/dnsUtils.js';
-import messages from '../utils/messages.js';
-import { DomainValidationError, NetworkError } from '../errors/customErrors.js';
+import { DNS_ERROR_TYPES } from '../constants/checkDns.constants.js';
+import { checkDns } from '../utils/checkDns.utils.js';
 
 export const domainValidation = async (domain: string): Promise<boolean> => {
   try {
-    const mxRecords = await performDnsLookup(domain);
+    const mxRecords = await checkDns(domain);
     return mxRecords.length > 0;
   } catch (error) {
-    if (error instanceof Error) {
-      switch (error.name) {
-        case DNS_ERROR_TYPES.DOMAIN_NOT_FOUND:
-          return false;
-        case DNS_ERROR_TYPES.NETWORK_ERROR:
-          throw NetworkError(messages.error.DOMAIN_NETWORK_ERROR, error);
-        case DNS_ERROR_TYPES.TIMEOUT:
-          throw NetworkError(messages.error.DOMAIN_TIMEOUT, error);
-        default:
-          throw DomainValidationError(messages.error.DOMAIN_VALIDATION_ERROR, error);
-      }
+    if (error instanceof Error && error.name === DNS_ERROR_TYPES.DOMAIN_NOT_FOUND) {
+      return false;
     }
-    throw DomainValidationError(messages.error.DOMAIN_UNKNOWN);
+    throw error;
   }
 };
 
