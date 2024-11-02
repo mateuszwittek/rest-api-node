@@ -122,13 +122,6 @@ declare global {
               : T extends object
                 ? { [K in keyof T]: Sanitized<T[K]> }
                 : T;
-
-  enum DNS_ERROR_TYPES {
-    DOMAIN_NOT_FOUND = 'DOMAIN_NOT_FOUND',
-    NETWORK_ERROR = 'NETWORK_ERROR',
-    TIMEOUT = 'TIMEOUT',
-    UNKNOWN = 'UNKNOWN',
-  }
 }
 
 export {};

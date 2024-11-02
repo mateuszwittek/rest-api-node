@@ -1,8 +1,8 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import helmetConfig from './config/helmetConfig.js';
-import corsConfig from './config/corsConfig.js';
+import helmetConfig from './config/helmet.config.js';
+import corsConfig from './config/cors.config.js';
 import router from './routes/v1/index.js';
 import errorHandler from './middleware/errorHandler.js';
 import { NotFoundError } from './errors/customErrors.js';
@@ -13,7 +13,7 @@ const app: express.Application = express();
 
 app.use(helmet(helmetConfig));
 app.use(limiter);
-app.use(cors(corsConfig));
+app.use(cors(corsConfig as unknown as cors.CorsOptions));
 app.use(express.json());
 
 // API routes

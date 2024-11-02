@@ -23,6 +23,6 @@ const config: IConfig = {
   rateLimitWindowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 900000,
   rateLimitMax: Number(process.env.RATE_LIMIT_MAX) || 100,
   rootPath: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../'),
-};
+} as const;
 
 export default config;
