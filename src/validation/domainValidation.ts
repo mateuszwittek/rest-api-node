@@ -20,5 +20,3 @@ export const domainValidation = async (domain: string): Promise<boolean> => {
     throw error;
   }
 };
-
-export default domainValidation;

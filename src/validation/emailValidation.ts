@@ -1,6 +1,6 @@
 import messages from '../utils/messages.js';
 import { EmailValidationError } from '../errors/customErrors.js';
-import isValidDomain from './domainValidation.js';
+import { domainValidation } from './domainValidation.js';
 import isDisposableEmail from './disposableEmailValidation.js';
 import { isValidDomainFormat } from '../utils/domainFormat.utils.js';
 
@@ -14,7 +14,7 @@ const emailValidation = async (value: string): Promise<boolean> => {
     throw EmailValidationError(messages.error.EMAIL_INVALID);
   }
 
-  await Promise.all([isValidDomain(domain), isDisposableEmail(value)]);
+  await Promise.all([domainValidation(domain), isDisposableEmail(value)]);
 
   return true;
 };
