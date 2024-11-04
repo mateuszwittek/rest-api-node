@@ -1,8 +1,6 @@
 import express from 'express';
-import peopleRoutes from './peopleRoutes.js';
+import { peopleRouter } from './people.routes.js';
 
-const router = express.Router();
+export const router = express.Router();
 
-router.use('/v1/people', peopleRoutes);
-
-export default router;
+router.use('/v1/people', peopleRouter);

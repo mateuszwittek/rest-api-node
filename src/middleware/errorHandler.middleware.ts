@@ -1,6 +1,6 @@
-import messages from '../utils/messages.js';
+import { messages } from '../constants/messages.js';
 
-const errorHandler: IErrorHandler = (error, req, res, _next) => {
+export const errorHandler: IErrorHandler = (error, req, res, _next) => {
   const status = 'Error';
   const statusCode = error.statusCode || 500;
   const message = error.isOperational ? error.message : messages.error.INTERNAL_SERVER;
@@ -24,5 +24,3 @@ const errorHandler: IErrorHandler = (error, req, res, _next) => {
 
   res.status(responseObj.statusCode).json(responseObj);
 };
-
-export default errorHandler;

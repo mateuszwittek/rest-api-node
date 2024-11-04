@@ -1,6 +1,6 @@
 import { HelmetOptions } from 'helmet';
 
-const helmetConfig: HelmetOptions = {
+export const helmetConfig: HelmetOptions = {
   contentSecurityPolicy: {
     useDefaults: false,
     directives: {
@@ -25,5 +25,3 @@ const helmetConfig: HelmetOptions = {
     action: 'deny',
   },
 } as const;
-
-export default helmetConfig;

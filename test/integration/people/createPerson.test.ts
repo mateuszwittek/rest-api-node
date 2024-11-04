@@ -1,5 +1,5 @@
 import app from '../../../src/app';
-import messages from '../../../src/utils/messages';
+import { messages } from '../../../src/constants/messages';
 import { validPerson } from '../../data/constants';
 import { cleanupDatabase, createPerson, makeRequest } from '../../utils/utils';
 import invalidRequestsData from '../../data/invalidRequests';

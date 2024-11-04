@@ -1,7 +1,7 @@
 import { MongoError } from 'mongodb';
 import { FilterQuery, MongooseError } from 'mongoose';
-import Person from '../models/person.js';
-import messages from '../utils/messages.js';
+import { messages } from '../constants/messages.js';
+import { Person } from '../models/person.model.js';
 import {
   NotFoundError,
   BadRequestError,
@@ -9,7 +9,6 @@ import {
   DuplicateEntryError,
 } from '../errors/customErrors.js';
 
-// Reusable query for finding a person by email or username
 const personQuery = (param: string): FilterQuery<IPerson> => ({
   $or: [{ email: param }, { username: param }],
 });
@@ -27,7 +26,7 @@ const findPersonByParam = async (param: string): Promise<IPerson> => {
   return person;
 };
 
-const getPeopleData: IGetPeopleData = async (): Promise<IPerson[]> => {
+export const getPeopleData: IGetPeopleData = async (): Promise<IPerson[]> => {
   try {
     return await Person.find({}, { _id: 0 }).lean();
   } catch (error) {
@@ -38,11 +37,11 @@ const getPeopleData: IGetPeopleData = async (): Promise<IPerson[]> => {
   }
 };
 
-const getPersonData: IGetPersonData = async (param: string): Promise<IPerson> => {
+export const getPersonData: IGetPersonData = async (param: string): Promise<IPerson> => {
   return await findPersonByParam(param);
 };
 
-const addPeopleData: IAddPersonData = async ({
+export const addPeopleData: IAddPersonData = async ({
   name,
   username,
   email,
@@ -62,7 +61,7 @@ const addPeopleData: IAddPersonData = async ({
   }
 };
 
-const updatePersonData: IUpdatePersonData = async (param, updateData): Promise<IPerson> => {
+export const updatePersonData: IUpdatePersonData = async (param, updateData): Promise<IPerson> => {
   if (Object.keys(updateData).length === 0) {
     throw BadRequestError(messages.error.BAD_REQUEST);
   }
@@ -84,7 +83,7 @@ const updatePersonData: IUpdatePersonData = async (param, updateData): Promise<I
   return person;
 };
 
-const deletePersonData: IDeletePersonData = async (param: string): Promise<IPerson> => {
+export const deletePersonData: IDeletePersonData = async (param: string): Promise<IPerson> => {
   const person = await Person.findOneAndDelete(personQuery(param));
 
   if (!person) {
@@ -93,5 +92,3 @@ const deletePersonData: IDeletePersonData = async (param: string): Promise<IPers
 
   return person;
 };
-
-export { getPeopleData, getPersonData, addPeopleData, updatePersonData, deletePersonData };

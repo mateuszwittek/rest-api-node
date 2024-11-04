@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
-import { successHandler } from '../../../src/middleware/successHandler';
-import messages from '../../../src/utils/messages';
+import { messages } from '../../../src/constants/messages';
+import { successHandler } from '../../../src/middleware/successHandler.middleware';
 
 describe('Success Handler', () => {
   const message = messages.success.PEOPLE_RETRIEVED;

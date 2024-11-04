@@ -1,6 +1,6 @@
 import app from '../../../src/app';
-import messages from '../../../src/utils/messages';
-import Person from '../../../src/models/person';
+import { messages } from '../../../src/constants/messages';
+import { Person } from '../../../src/models/person.model';
 import { cleanupDatabase, createPerson, makeRequest } from '../../utils/utils';
 
 const api = makeRequest(app);

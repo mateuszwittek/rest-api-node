@@ -17,6 +17,4 @@ const PersonSchema = new mongoose.Schema<IPersonDocument>({
   },
 });
 
-const Person = mongoose.model<IPersonDocument>('Person', PersonSchema);
-
-export default Person;
+export const Person = mongoose.model<IPersonDocument>('Person', PersonSchema);

@@ -1,13 +1,13 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import helmetConfig from './config/helmet.config.js';
-import corsConfig from './config/cors.config.js';
-import router from './routes/v1/index.js';
-import errorHandler from './middleware/errorHandler.js';
+import { helmetConfig } from './config/helmet.config.js';
+import { corsConfig } from './config/cors.config.js';
+import { router } from './routes/v1/index.js';
+import { errorHandler } from './middleware/errorHandler.middleware.js';
 import { NotFoundError } from './errors/customErrors.js';
-import limiter from './middleware/rateLimiter.js';
-import { responseSanitizer } from './utils/responseSanitizer.js';
+import { limiter } from './middleware/rateLimiter.middleware.js';
+import { responseSanitizer } from './utils/responseSanitizer.utils.js';
 
 const app: express.Application = express();
 

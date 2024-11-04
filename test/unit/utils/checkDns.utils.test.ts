@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 import dns from 'dns';
-import messages from '../../../src/utils/messages.js';
+import { messages } from '../../../src/constants/messages.js';
 import { DNSLookupError, NetworkError } from '../../../src/errors/customErrors.js';
 import { dnsConfig } from '../../../src/config/checkDns.config.js';
 import { checkDns, handleDnsError } from '../../../src/utils/checkDns.utils.js';

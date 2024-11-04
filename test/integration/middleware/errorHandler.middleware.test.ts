@@ -1,8 +1,8 @@
 import { jest } from '@jest/globals';
 import app from '../../../src/app';
-import Person from '../../../src/models/person';
+import { messages } from '../../../src/constants/messages';
+import { Person } from '../../../src/models/person.model';
 import { DatabaseError } from '../../../src/errors/customErrors';
-import messages from '../../../src/utils/messages';
 import { MongoError } from 'mongodb';
 import { makeRequest } from '../../utils/utils';
 

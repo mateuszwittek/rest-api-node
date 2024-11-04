@@ -1,9 +1,9 @@
 import express from 'express';
 import request from 'supertest';
-import rateLimiter, { limiterStore } from '../../../src/middleware/rateLimiter';
-import messages from '../../../src/utils/messages';
-import { successHandler } from '../../../src/middleware/successHandler';
-import config from '../../../src/config/config';
+import { limiter, limiterStore } from '../../../src/middleware/rateLimiter.middleware';
+import { messages } from '../../../src/constants/messages.js';
+import { successHandler } from '../../../src/middleware/successHandler.middleware';
+import { config } from '../../../src/config/global.config';
 
 describe('Rate Limiter Middleware', () => {
   let app: express.Express;
@@ -23,7 +23,7 @@ describe('Rate Limiter Middleware', () => {
     app = express();
 
     const testRouter = express.Router();
-    testRouter.use(rateLimiter);
+    testRouter.use(limiter);
     testRouter.get('/rate-test', (req, res) => {
       successHandler(res, messages.success.SUCCESS, {}, 200);
     });

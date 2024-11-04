@@ -1,7 +1,7 @@
 import dns from 'dns';
 import { DNS_ERROR_TYPES } from '../constants/checkDns.constants.js';
 import { dnsConfig } from '../config/checkDns.config.js';
-import messages from './messages.js';
+import { messages } from '../constants/messages.js';
 import { DNSLookupError, NetworkError } from '../errors/customErrors.js';
 
 const createTimeout = (timeout: number): Promise<never> => {

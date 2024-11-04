@@ -1,4 +1,4 @@
-import messages from '../utils/messages.js';
+import { messages } from '../constants/messages.js';
 interface ErrorOptions {
   cause?: Error;
   isOperational?: boolean;

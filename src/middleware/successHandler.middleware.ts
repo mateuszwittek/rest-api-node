@@ -1,4 +1,4 @@
-import messages from '../utils/messages.js';
+import { messages } from '../constants/messages.js';
 
 const successHandler: ISuccessHandler = (res, message, data = {}, statusCode = 200) => {
   const responseObj: ISuccessResponse = {

@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { responseSanitizer } from '../../../src/utils/responseSanitizer';
+import { responseSanitizer } from '../../../src/utils/responseSanitizer.utils';
 
 describe('Response Sanitizer', () => {
   let mockResponse: any;

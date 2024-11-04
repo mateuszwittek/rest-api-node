@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
-import config from './config.js';
-import messages from '../utils/messages.js';
+import { config } from './global.config.js';
+import { messages } from '../constants/messages.js';
 import { DatabaseError } from '../errors/customErrors.js';
 
 const { database } = config;
 
-const connectDB: IDatabaseFunction = async (dbConfig: IDatabaseConfig = database) => {
+export const connectDB: IDatabaseFunction = async (dbConfig: IDatabaseConfig = database) => {
   try {
     if (!dbConfig) {
       throw DatabaseError(messages.error.ENV_DATABASE_URI);
@@ -34,5 +34,3 @@ const handleSIGINT: ISignalHandler = async () => {
 };
 
 process.on('SIGINT', handleSIGINT);
-
-export default connectDB;

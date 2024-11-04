@@ -58,5 +58,3 @@ export const messages: TMessages = Object.freeze({
     DOMAIN_UNKNOWN: 'Unknown DNS error occurred',
   },
 });
-
-export default messages;

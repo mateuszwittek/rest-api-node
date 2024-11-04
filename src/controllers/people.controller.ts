@@ -1,12 +1,12 @@
-import { controllerWrapper } from '../utils/controllerWrapper.js';
+import { messages } from '../constants/messages.js';
+import { controllerWrapper } from '../utils/controllerWrapper.utils.js';
 import {
   getPeopleData,
   getPersonData,
   addPeopleData,
   updatePersonData,
   deletePersonData,
-} from '../services/peopleService.js';
-import messages from '../utils/messages.js';
+} from '../services/people.services.js';
 
 export const getAllPeople = controllerWrapper(
   () => getPeopleData(),

@@ -1,24 +1,12 @@
-import { Request, Response, NextFunction } from 'express';
-import { body, validationResult, CustomValidator } from 'express-validator';
-import messages from '../utils/messages.js';
-import { ValidationError } from '../errors/customErrors.js';
-import validateEmail from '../validation/emailValidation.js';
-
-const validateRequest = (req: Request, res: Response, next: NextFunction): void => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const errorMessages = errors.array().map(err => err.msg);
-    const uniqueErrors = [...new Set(errorMessages)];
-    next(ValidationError(uniqueErrors.join('. ')));
-    return;
-  }
-  next();
-};
+import { body, CustomValidator } from 'express-validator';
+import { messages } from '../constants/messages.js';
+import { emailValidation } from '../utils/emailValidation.utils.js';
+import { validateRequest } from '../middleware/request.middleware.js';
 
 const isRequired: CustomValidator = (value, { req }) =>
   req.method === 'POST' || value !== undefined;
 
-const validatePerson = [
+export const validatePeople = [
   body('name')
     .if(isRequired)
     .trim()
@@ -48,10 +36,8 @@ const validatePerson = [
     .withMessage(messages.error.EMAIL_REQUIRED)
     .isEmail()
     .withMessage(messages.error.EMAIL_INVALID)
-    .custom(validateEmail)
+    .custom(emailValidation)
     .normalizeEmail(),
 
   validateRequest,
 ];
-
-export default validatePerson;

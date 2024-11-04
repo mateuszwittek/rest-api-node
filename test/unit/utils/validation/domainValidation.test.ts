@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { domainValidation } from '../../../src/validation/domainValidation';
+import { domainValidation } from '../../../../src/utils/domainValidation.utils';
 
 beforeEach(() => {
   jest.useFakeTimers();

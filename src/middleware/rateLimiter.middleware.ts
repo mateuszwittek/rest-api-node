@@ -1,9 +1,9 @@
 import rateLimit, { MemoryStore } from 'express-rate-limit';
-import config from '../config/config.js';
+import { config } from '../config/global.config.js';
 
 export const limiterStore = new MemoryStore();
 
-const limiter = rateLimit({
+export const limiter = rateLimit({
   windowMs: config.rateLimitWindowMs,
   max: config.rateLimitMax,
   standardHeaders: true,
@@ -11,5 +11,3 @@ const limiter = rateLimit({
   store: limiterStore,
   skip: () => config.env === 'test',
 });
-
-export default limiter;

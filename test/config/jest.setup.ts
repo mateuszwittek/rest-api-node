@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Collection } from 'mongodb';
-import config from '../../src/config/config';
+import { config } from '../../src/config/global.config.js';
 
 const isSystemCollection = (name: string): boolean => name.startsWith('system.');
 
