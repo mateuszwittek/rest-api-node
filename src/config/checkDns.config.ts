@@ -1,9 +1,8 @@
 import dns from 'dns';
 import { promisify } from 'util';
+import { DNS_TIMEOUT_MS } from '../constants/checkDns.constants';
 
-const dnsConfig = {
-  resolveMx: promisify(dns.resolveMx),
-  timeoutMs: 5000,
+export const dnsConfig = {
+  resolveMx: promisify<string, dns.MxRecord[]>(dns.resolveMx),
+  timeoutMs: DNS_TIMEOUT_MS,
 } as const;
-
-export default dnsConfig;
