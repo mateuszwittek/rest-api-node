@@ -15,10 +15,15 @@ describe('checkDns', () => {
   });
 
   it('should return MX records for a valid domain', async () => {
-    mockResolveMx.mockResolvedValue([{ exchange: 'mail.example.com', priority: 10 }]);
-    await expect(checkDns('example.com')).resolves.toEqual([
-      { exchange: 'mail.example.com', priority: 10 },
-    ]);
+    jest.useFakeTimers();
+    mockResolveMx.mockResolvedValue([{ exchange: 'smtp.google.com', priority: 10 }]);
+
+    const dnsCheck = checkDns('google.com');
+
+    jest.runAllTimers();
+
+    await expect(dnsCheck).resolves.toEqual([{ exchange: 'smtp.google.com', priority: 10 }]);
+    jest.useRealTimers();
   });
 
   it('should throw DNSLookupError on timeout', async () => {
