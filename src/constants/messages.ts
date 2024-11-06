@@ -56,5 +56,6 @@ export const messages: TMessages = Object.freeze({
     DOMAIN_TIMEOUT: 'DNS lookup timed out',
     DOMAIN_NETWORK_ERROR: 'Network error during DNS lookup',
     DOMAIN_UNKNOWN: 'Unknown DNS error occurred',
+    INVALID_TIMEOUT: 'Invalid timeout value',
   },
 });

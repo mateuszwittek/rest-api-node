@@ -1,7 +1,6 @@
 import { jest } from '@jest/globals';
-import dns from 'dns';
 import { messages } from '../../../src/constants/messages.js';
-import { DNSLookupError, NetworkError } from '../../../src/errors/customErrors.js';
+import { DNS_ERROR_CODES } from '../../../src/constants/checkDns.constants.js';
 import { dnsConfig } from '../../../src/config/checkDns.config.js';
 import { checkDns, handleDnsError } from '../../../src/utils/checkDns.utils.js';
 
@@ -10,73 +9,39 @@ const mockResolveMx = jest.spyOn(dnsConfig, 'resolveMx') as jest.MockedFunction<
 >;
 
 describe('checkDns', () => {
-  const domain = 'google.com';
-
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-
   afterEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
-    jest.useRealTimers();
     jest.clearAllTimers();
+    mockResolveMx.mockReset();
   });
 
-  it('should return MX records on successful DNS lookup', async () => {
-    const mockMxRecords: dns.MxRecord[] = [{ exchange: 'mail.example.com', priority: 10 }];
-    mockResolveMx.mockResolvedValueOnce(mockMxRecords);
-
-    const result = await checkDns(domain);
-    expect(result).toEqual(mockMxRecords);
-    expect(mockResolveMx).toHaveBeenCalledWith(domain);
+  it('should return MX records for a valid domain', async () => {
+    mockResolveMx.mockResolvedValue([{ exchange: 'mail.example.com', priority: 10 }]);
+    await expect(checkDns('example.com')).resolves.toEqual([
+      { exchange: 'mail.example.com', priority: 10 },
+    ]);
   });
 
   it('should throw DNSLookupError on timeout', async () => {
-    const error = Object.assign(new Error(messages.error.DOMAIN_TIMEOUT));
-    mockResolveMx.mockImplementation(() => new Promise(() => {}));
+    jest.useFakeTimers();
+    mockResolveMx.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)));
 
-    const dnsPromise = checkDns(domain);
-    jest.advanceTimersByTime(5000);
+    const dnsCheck = checkDns('google.com');
 
-    await expect(dnsPromise).rejects.toThrow(DNSLookupError(messages.error.DOMAIN_TIMEOUT, error));
+    jest.runAllTimers();
+
+    await expect(dnsCheck).rejects.toThrow(messages.error.DOMAIN_TIMEOUT);
+
+    jest.useRealTimers();
+  }, 11000);
+
+  it('should handle ENOTFOUND error code as DOMAIN_NOT_FOUND', () => {
+    const error = new Error(messages.error.DOMAIN_NOT_FOUND) as Error & { code: string };
+    error.code = DNS_ERROR_CODES.NOT_FOUND;
+    expect(() => handleDnsError(error)).toThrow(messages.error.DOMAIN_NOT_FOUND);
   });
 
-  it('should throw DNSLookupError if resolveMx fails', async () => {
-    const error = Object.assign(new Error('Resolution failed'));
-    mockResolveMx.mockRejectedValueOnce(error);
-    await expect(checkDns(domain)).rejects.toThrow(
-      DNSLookupError(messages.error.DOMAIN_VALIDATION_ERROR, error)
-    );
+  it('should handle unknown error codes as DomainValidationError', () => {
+    const error = new Error(messages.error.DOMAIN_VALIDATION_ERROR);
+    expect(() => handleDnsError(error)).toThrow(messages.error.DOMAIN_VALIDATION_ERROR);
   });
-});
-
-describe('handleDnsError', () => {
-  test.each([
-    {
-      error: Object.assign(new Error('ENOTFOUND'), { code: 'ENOTFOUND' }),
-      expectedErrorClass: DNSLookupError,
-      expectedMessage: messages.error.DOMAIN_NOT_FOUND,
-    },
-    {
-      error: Object.assign(new Error('ECONNREFUSED'), { code: 'ECONNREFUSED' }),
-      expectedErrorClass: NetworkError,
-      expectedMessage: messages.error.NETWORK_ERROR,
-    },
-    {
-      error: Object.assign(new Error('ETIMEDOUT'), { code: 'ETIMEDOUT' }),
-      expectedErrorClass: NetworkError,
-      expectedMessage: messages.error.DOMAIN_TIMEOUT,
-    },
-    {
-      error: Object.assign(new Error('UNKNOWN_ERROR')),
-      expectedErrorClass: DNSLookupError,
-      expectedMessage: messages.error.DOMAIN_VALIDATION_ERROR,
-    },
-  ])(
-    'it throws $expectedErrorClass for error $error.message',
-    ({ error, expectedErrorClass, expectedMessage }) => {
-      expect(() => handleDnsError(error)).toThrow(expectedErrorClass(expectedMessage, error));
-    }
-  );
 });

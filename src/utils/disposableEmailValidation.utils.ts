@@ -25,9 +25,10 @@ const disposableDomains = Object.freeze([
   'example.com',
 ]);
 
-export const disposableEmailValidation = async (email: string): Promise<void> => {
+export const disposableEmailValidation = async (email: string): Promise<boolean> => {
   const domain = email.split('@')[1]?.toLowerCase();
   if (disposableDomains.includes(domain)) {
     throw EmailValidationError(messages.error.EMAIL_DISPOSABLE);
   }
+  return true;
 };
