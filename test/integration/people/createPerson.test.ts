@@ -41,4 +41,10 @@ describe('POST /people', () => {
     });
     expect(res.status).toBe(409);
   });
+
+  it('should reject when required fields are missing', async () => {
+    const res = await api.post('/people', {});
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe(messages.error.REQUIRED_FIELDS);
+  });
 });

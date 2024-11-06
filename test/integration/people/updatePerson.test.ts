@@ -1,4 +1,5 @@
 import app from '../../../src/app';
+import { messages } from '../../../src/constants/messages';
 import { cleanupDatabase, createPerson, makeRequest } from '../../utils/utils';
 
 const api = makeRequest(app);
@@ -35,5 +36,18 @@ describe('PUT /people/:param', () => {
   it('should return 404 for non-existent person', async () => {
     const res = await api.put('/people/nonexistent', { name: 'New Name' });
     expect(res.status).toBe(404);
+  });
+
+  it('should reject empty update data', async () => {
+    const person = await createPerson();
+    const res = await api.put(`/people/${person.username}`, {});
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe(messages.error.BAD_REQUEST);
+  });
+
+  it('should reject empty parameter', async () => {
+    const res = await api.put('/people/', { name: 'John Updated' });
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe(messages.error.BAD_REQUEST);
   });
 });

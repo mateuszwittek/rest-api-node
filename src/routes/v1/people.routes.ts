@@ -1,5 +1,9 @@
 import express from 'express';
-import { validatePeople } from '../../validation/people.validation.js';
+import {
+  validateParam,
+  validatePeople,
+  validateUpdate,
+} from '../../validation/people.validation.js';
 import {
   getAllPeople,
   getPerson,
@@ -12,6 +16,7 @@ export const peopleRouter = express.Router();
 
 peopleRouter.get('/', getAllPeople);
 peopleRouter.get('/:param', getPerson);
-peopleRouter.post('/', validatePeople, addPerson);
-peopleRouter.put('/:param', validatePeople, updatePerson);
+peopleRouter.post('/', ...validatePeople, addPerson);
+peopleRouter.put('/', ...validateParam, updatePerson);
+peopleRouter.put('/:param', ...validateUpdate, updatePerson);
 peopleRouter.delete('/:param', deletePerson);
